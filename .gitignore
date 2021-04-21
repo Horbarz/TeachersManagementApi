@@ -1,0 +1,8 @@
+.vs
+*/**/bin/Debug
+*/**/bin/Release
+*/**/obj/Debug
+*/**/obj/Release
+obj
+bin
+.DS_Store
