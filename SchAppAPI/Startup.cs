@@ -44,6 +44,8 @@ namespace SchAppAPI
 
             //inject dependencies
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddTransient<ISubjectRepository, SubjectRepository>();
+
 
             //newtonsoft json
 
