@@ -14,7 +14,7 @@ namespace SchAppAPI.Controllers
     //[Authorize]
     [ApiController]
     [Route("api/[controller]")]
-    public class SubjectController: ControllerBase
+    public class SubjectController : ControllerBase
     {
         public readonly ISubjectRepository subjectRepo;
         public SubjectController(ISubjectRepository subjectRepo)
@@ -30,7 +30,7 @@ namespace SchAppAPI.Controllers
             return Ok(subjects);
         }
         [HttpGet]
-        public async Task<IActionResult> GetSubject( int id)
+        public async Task<IActionResult> GetSubject(int id)
         {
             bool isValidId = Guid.TryParse(id.ToString(), out Guid idGuid);
             if (!isValidId) return BadRequest("Invalid Id");
