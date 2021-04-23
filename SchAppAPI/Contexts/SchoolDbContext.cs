@@ -19,7 +19,7 @@ namespace SchAppAPI.Contexts
         }
 
         public DbSet<Subject> Subjects { get; set; }
-
+        public DbSet<Class> Classes { get; set; }
 
 
         public override int SaveChanges()
