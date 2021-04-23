@@ -23,31 +23,30 @@ namespace SchAppAPI.Controllers
         }
 
         [HttpGet]
-        [Route("getall")]
         public async Task<IActionResult> GetAllSubjects()
         {
             var subjects = await this.subjectRepo.GetAll();
             return Ok(subjects);
         }
-        [HttpGet]
-        public async Task<IActionResult> GetSubject(int id)
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetSubject(Guid id)
         {
-            bool isValidId = Guid.TryParse(id.ToString(), out Guid idGuid);
-            if (!isValidId) return BadRequest("Invalid Id");
-            var subjects = await this.subjectRepo.GetById(idGuid);
+            if (!ModelState.IsValid) BadRequest();
+            var subjects = await this.subjectRepo.GetById(id);
             return Ok(subjects);
         }
 
         [HttpPut]
-        public IActionResult UpdateSubject(UpdateSubjectRequest subjectRequest)
+        public async Task<IActionResult> UpdateSubject(UpdateSubjectRequest subjectRequest)
         {
+            if (!ModelState.IsValid) BadRequest();
             var subjectToUpdate = new Subject
             {
                 Id = subjectRequest.Id,
                 Name = subjectRequest.Name
             };
             this.subjectRepo.Update(subjectToUpdate);
-            this.subjectRepo.SaveChangesAsync();
+            await this.subjectRepo.SaveChangesAsync();
             return Ok();
         }
 
@@ -63,8 +62,10 @@ namespace SchAppAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetSubject(CreateSubjectRequest subjectRequest)
+        public async Task<IActionResult> CreateSubject(CreateSubjectRequest subjectRequest)
         {
+            if (!ModelState.IsValid) BadRequest();
+
             var subjectToCreate = new Subject
             {
                 Name = subjectRequest.Name
