@@ -1,6 +1,6 @@
 using System;
 
-namespace SchAppAPI.Models
+namespace SchAppAPI.Models.Lesson
 {
     public class Question : BaseEntity
     {

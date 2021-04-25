@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SchAppAPI.Models
+namespace SchAppAPI.Models.Lesson
 {
     public class Content : BaseEntity
     {
