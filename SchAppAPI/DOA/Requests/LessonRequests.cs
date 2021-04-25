@@ -1,3 +1,4 @@
+using SchAppAPI.Models.Lesson;
 using System;
 using System.ComponentModel.DataAnnotations;
 
@@ -15,10 +16,9 @@ namespace SchAppAPI.DOA.Requests
         public Guid SubjectId { get; set; }
         public Guid ClassId { get; set; }
 
-        [Required(ErrorMessage = "Content id is required")]
-        public Guid ContentId { get; set; }
         public string Thumbnail { get; set; }
-        public Guid QuizId { get; set; }
+
+        public string Content { get; set; }
 
     }
 
@@ -37,10 +37,9 @@ namespace SchAppAPI.DOA.Requests
         public Guid SubjectId { get; set; }
         public Guid ClassId { get; set; }
 
-        [Required(ErrorMessage = "Content id is required")]
-        public Guid ContentId { get; set; }
+        public string Content { get; set; }
+
         public string Thumbnail { get; set; }
-        public Guid QuizId { get; set; }
 
     }
 }

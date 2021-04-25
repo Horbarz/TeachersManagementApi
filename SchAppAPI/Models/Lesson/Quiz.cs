@@ -10,6 +10,7 @@ namespace SchAppAPI.Models.Lesson
         public QuizType QuizType { get; set; }
         public List<Question> Questions { get; set; }
 
-
+        public Guid LessonId { get; set; }
+        public Lesson Lesson { get; set; }
     }
 }

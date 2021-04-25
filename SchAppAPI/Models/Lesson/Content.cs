@@ -12,6 +12,8 @@ namespace SchAppAPI.Models.Lesson
         public string Body { get; set; }
 
 
+        public Guid LessonId { get; set; }
+        public Lesson Lesson { get; set; }
 
     }
 }

@@ -13,11 +13,9 @@ namespace SchAppAPI.Models.Lesson
         public Subject Subject { get; set; }
         public Guid ClassId { get; set; }
         public Class Class { get; set; }
-        public Guid ContentId { get; set; }
-        public Content Content { get; set; }
         public string Thumbnail { get; set; }
-        public Guid QuizId { get; set; }
-        public Quiz Quiz { get; set; }
+        public List<Quiz> Quiz { get; set; }
+        public List<Content> Content { get; set; }
 
         //Lesson report => teacher id and lesson id
         //Answers to Quiz report-> quiz id and teacher id -> scores, markObtainable, %completion,timetaken,answers(json->list of objects with question id and answer),

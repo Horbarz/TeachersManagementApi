@@ -14,10 +14,12 @@ namespace SchAppAPI.Controllers
     public class LessonController : ControllerBase
     {
         public readonly ILessonRepository lessonRepository;
+        public readonly IContentRepository contentRepository;
 
-        public LessonController(ILessonRepository lessonRepository)
+        public LessonController(ILessonRepository lessonRepository, IContentRepository contentRepository)
         {
             this.lessonRepository = lessonRepository;
+            this.contentRepository = contentRepository;
         }
 
         [HttpGet]
@@ -47,11 +49,17 @@ namespace SchAppAPI.Controllers
                 LessonNumber = lessonRequest.LessonNumber,
                 SubjectId = lessonRequest.SubjectId,
                 ClassId = lessonRequest.ClassId,
-                ContentId = lessonRequest.ContentId,
-                Thumbnail = lessonRequest.Thumbnail,
-                QuizId = lessonRequest.QuizId
+                Thumbnail = lessonRequest.Thumbnail
+            };
+            var content = new Content
+            {
+                LessonId = lessonToUpdate.Id,
+                contentType = ContentType.Text,
+                Body = lessonRequest.Content,
+                Title = lessonRequest.Name
             };
             this.lessonRepository.Update(lessonToUpdate);
+            this.contentRepository.Update(content);
             await this.lessonRepository.SaveChangesAsync();
             return Ok(new { status = "success", message = "lesson successfully updated" });
         }
@@ -78,12 +86,19 @@ namespace SchAppAPI.Controllers
                 LessonNumber = lessonRequest.LessonNumber,
                 SubjectId = lessonRequest.SubjectId,
                 ClassId = lessonRequest.ClassId,
-                ContentId = lessonRequest.ContentId,
-                Thumbnail = lessonRequest.Thumbnail,
-                QuizId = lessonRequest.QuizId
+                Thumbnail = lessonRequest.Thumbnail
+            };
+            var content = new Content
+            {
+                LessonId = lessonToCreate.Id,
+                contentType = ContentType.Text,
+                Body = lessonRequest.Content,
+                Title = lessonRequest.Name
             };
             await this.lessonRepository.Add(lessonToCreate);
+            await this.contentRepository.Add(content);
             await this.lessonRepository.SaveChangesAsync();
+
             return Ok(new { status = "success", message = "Lesson successfully created" });
         }
 
