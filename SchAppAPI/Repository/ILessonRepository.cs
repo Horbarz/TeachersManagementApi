@@ -1,4 +1,5 @@
 using SchAppAPI.Models;
+using SchAppAPI.Models.Lesson;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SchAppAPI.DOA.Requests;
 using SchAppAPI.Models;
+using SchAppAPI.Models.Lesson;
 using SchAppAPI.Repository;
 
 namespace SchAppAPI.Controllers

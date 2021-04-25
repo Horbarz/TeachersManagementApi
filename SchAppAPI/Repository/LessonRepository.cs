@@ -1,5 +1,6 @@
 using SchAppAPI.Contexts;
 using SchAppAPI.Models;
+using SchAppAPI.Models.Lesson;
 using SchAppAPI.Repository;
 
 
