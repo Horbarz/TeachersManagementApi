@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace SchAppAPI.Models.Lesson
 {
-    public class QuizReport
+    public class QuizReport: BaseEntity
     {
         public Guid QuizId { get; set; }
         public Quiz Quiz { get; set; }
