@@ -7,7 +7,7 @@ using SchAppAPI.Models;
 
 namespace SchAppAPI.Contexts
 {
-    public class SchoolDbContext  : IdentityDbContext<User>
+    public class SchoolDbContext : IdentityDbContext<User>
     {
         //public DbSet<Teacher> Teachers { get; set; }
 
@@ -20,6 +20,10 @@ namespace SchAppAPI.Contexts
 
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<Class> Classes { get; set; }
+        public DbSet<Lesson> Lessons { get; set; }
+        public DbSet<Content> Contents { get; set; }
+        public DbSet<Quiz> Quizzes { get; set; }
+        public DbSet<Question> Questions { get; set; }
 
 
         public override int SaveChanges()

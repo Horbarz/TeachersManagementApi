@@ -16,6 +16,7 @@ using SchAppAPI.Contexts;
 using SchAppAPI.DOA;
 using SchAppAPI.Models;
 using SchAppAPI.Repository;
+using SchAppAPI.Services;
 
 namespace SchAppAPI.Controllers
 {
@@ -25,12 +26,14 @@ namespace SchAppAPI.Controllers
     {
         private readonly UserManager<User> userManager;
 
+        private readonly IMailService mailService;
+
         private readonly SignInManager<User> signInManager;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly ILogger<AuthenticateController> logger;
         private readonly IConfiguration _configuration;
         private readonly SchoolDbContext _context;
-        
+
 
         public AuthenticateController(
             UserManager<User> userManager,
@@ -38,7 +41,8 @@ namespace SchAppAPI.Controllers
             IConfiguration configuration,
             SchoolDbContext context,
             SignInManager<User> signInManager,
-            ILogger<AuthenticateController> logger
+            ILogger<AuthenticateController> logger,
+            IMailService mailService
 
         )
         {
@@ -48,7 +52,8 @@ namespace SchAppAPI.Controllers
             this._context = context;
             this.logger = logger;
             this.signInManager = signInManager;
-    
+            this.mailService = mailService;
+
         }
 
         [HttpPost]
@@ -73,6 +78,9 @@ namespace SchAppAPI.Controllers
                 var authClaims = new List<Claim>{
                     new Claim(ClaimTypes.Name, user.UserName),
                     new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
+                    new Claim(ClaimTypes.Email,user.Email),
+                    new Claim("Id",user.Id),
+
                 };
 
                 //Add new claim
@@ -92,11 +100,12 @@ namespace SchAppAPI.Controllers
                 return Ok(new
                 {
                     isLoggedIn = true,
-                    token = new JwtSecurityTokenHandler().WriteToken(token),
-                    expiration = token.ValidTo,
-                    role = userRoles,
-                    email = user.UserName,
-                    userId = user.Id
+                    message = "Operation successful",
+                    token = new JwtSecurityTokenHandler().WriteToken(token)
+                    // expiration = token.ValidTo,
+                    // role = userRoles,
+                    // email = user.UserName,
+                    // userId = user.Id
                 });
 
             }
@@ -148,7 +157,7 @@ namespace SchAppAPI.Controllers
             var result = await userManager.CreateAsync(user, model.Password);
             if (!result.Succeeded)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { Status = "failed", isRegistered = false, Message =  result.Errors });
+                return StatusCode(StatusCodes.Status500InternalServerError, new { Status = "failed", isRegistered = false, Message = result.Errors });
             }
             else
             {
@@ -177,7 +186,7 @@ namespace SchAppAPI.Controllers
                 LastName = model.LastName,
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
-           
+
             };
 
             var result = await userManager.CreateAsync(user, model.Password);
@@ -199,15 +208,42 @@ namespace SchAppAPI.Controllers
 
         }
 
-        [HttpGet]
-        [Route("getUsers")]
-        public async Task<List<User>> GetUsers()
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Route("forgot_password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPassword forgotPassword)
         {
-            using (_context)
+            var userExists = await userManager.FindByNameAsync(forgotPassword.Email);
+            if (userExists == null)
             {
-                var teachers = userManager.GetUsersInRoleAsync(UserRoles.User.ToString()).Result;
-                return teachers.OfType<User>().ToList();
+                return StatusCode(StatusCodes.Status500InternalServerError, new { Status = "failed", Message = "User does not exists!" });
             }
+
+            //Generate password reset token
+            var token = await userManager.GeneratePasswordResetTokenAsync(userExists);
+            var passwordResetLink = Url.Action("ResetPassword", "AuthenticationController",
+                    new { email = forgotPassword.Email, token }, Request.Scheme);
+            //Send to email         
+            return Ok(new { reseturl = passwordResetLink });
+
+        }
+
+        [HttpPost]
+        [Route("reset_password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPassword reset)
+        {
+            var user = await userManager.FindByNameAsync(reset.Email);
+            if (user == null)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { Status = "failed", Message = "User does not exists!" });
+            }
+            var resetPasswordResult = await userManager.ResetPasswordAsync(user, reset.Token, reset.Password);
+            if (!resetPasswordResult.Succeeded)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new { Status = "failed", Message = resetPasswordResult.Errors });
+            }
+            return Ok(new { Status = "Success", Message = "Password was reset successfully" });
+
         }
     }
 }
