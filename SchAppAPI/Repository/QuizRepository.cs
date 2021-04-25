@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace SchAppAPI.Repository
 {
-    public class ContentRepository : BaseRepository<Content>, IContentRepository
+    public class QuizRepository : BaseRepository<Quiz>, IQuizRepository
     {
-        public ContentRepository(SchoolDbContext context) : base(context)
+        public QuizRepository(SchoolDbContext context) : base(context)
         {
         }
     }

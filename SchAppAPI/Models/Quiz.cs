@@ -8,7 +8,8 @@ namespace SchAppAPI.Models
     {
         public string Name { get; set; }
         public QuizType QuizType { get; set; }
-        public List<Question> Question { get; set; }
+        public List<Question> Questions { get; set; }
+
 
     }
 }

@@ -36,7 +36,7 @@ namespace SchAppAPI
         {
 
             services.AddControllers();
-            
+
             //entity framework services
             services.AddDbContext<SchoolDbContext>(options =>
                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
@@ -46,6 +46,8 @@ namespace SchAppAPI
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddTransient<ISubjectRepository, SubjectRepository>();
             services.AddTransient<IClassRepository, ClassRepository>();
+            services.AddTransient<IContentRepository, ContentRepository>();
+            services.AddTransient<ILessonRepository, LessonRepository>();
 
 
             //newtonsoft json
