@@ -15,6 +15,9 @@ namespace SchAppAPI.DOA.Requests
         [Required(ErrorMessage = "Content body is required")]
         public string Body { get; set; }
 
+        [Required(ErrorMessage = "Lesson Id is required")]
+        public Guid LessonId { get; set; }
+
 
     }
 
@@ -31,5 +34,7 @@ namespace SchAppAPI.DOA.Requests
 
         [Required(ErrorMessage = "Content body is required")]
         public string Body { get; set; }
+        [Required(ErrorMessage = "Lesson Id is required")]
+        public Guid LessonId { get; set; }
     }
 }

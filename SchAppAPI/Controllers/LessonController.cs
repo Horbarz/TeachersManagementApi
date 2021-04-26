@@ -101,6 +101,7 @@ namespace SchAppAPI.Controllers
                 contentType = ContentType.Text,
                 Body = lessonRequest.Content,
                 Title = lessonRequest.Name
+
             };
             await this.lessonRepository.Add(lessonToCreate);
             await this.contentRepository.Add(content);

@@ -15,9 +15,7 @@ namespace SchAppAPI.DOA.Requests
         [Required(ErrorMessage = "Subject id is required")]
         public Guid SubjectId { get; set; }
         public Guid ClassId { get; set; }
-
         public string Thumbnail { get; set; }
-
         public string Content { get; set; }
 
     }

@@ -25,14 +25,12 @@ namespace SchAppAPI.Controllers
     public class AuthenticateController : ControllerBase
     {
         private readonly UserManager<User> userManager;
-
-        private readonly IMailService mailService;
-
         private readonly SignInManager<User> signInManager;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly ILogger<AuthenticateController> logger;
         private readonly IConfiguration _configuration;
         private readonly SchoolDbContext _context;
+        private readonly IEmailService emailService;
 
 
         public AuthenticateController(
@@ -42,7 +40,7 @@ namespace SchAppAPI.Controllers
             SchoolDbContext context,
             SignInManager<User> signInManager,
             ILogger<AuthenticateController> logger,
-            IMailService mailService
+            IEmailService emailService
 
         )
         {
@@ -52,8 +50,7 @@ namespace SchAppAPI.Controllers
             this._context = context;
             this.logger = logger;
             this.signInManager = signInManager;
-            this.mailService = mailService;
-
+            this.emailService = emailService;
         }
 
         [HttpPost]
@@ -80,7 +77,6 @@ namespace SchAppAPI.Controllers
                     new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
                     new Claim(ClaimTypes.Email,user.Email),
                     new Claim("Id",user.Id),
-
                 };
 
                 //Add new claim
@@ -117,7 +113,6 @@ namespace SchAppAPI.Controllers
             //    }
             //    );
             //}
-
             return Ok(
                 new
                 {

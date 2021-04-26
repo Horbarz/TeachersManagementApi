@@ -19,6 +19,7 @@ using Microsoft.OpenApi.Models;
 using SchAppAPI.Contexts;
 using SchAppAPI.Models;
 using SchAppAPI.Repository;
+using SchAppAPI.Services;
 
 namespace SchAppAPI
 {
@@ -52,7 +53,9 @@ namespace SchAppAPI
             services.AddTransient<IQuizReportRepository, QuizReportRepository>();
             services.AddTransient<ILessonReportRepository, LessonReportRepository>();
 
+            services.AddTransient<IEmailService, EmailService>();
 
+            services.Configure<SMTPConfigModel>(Configuration.GetSection("SMTPConfig"));
 
             //newtonsoft json
 
