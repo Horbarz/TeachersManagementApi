@@ -48,6 +48,10 @@ namespace SchAppAPI
             services.AddTransient<IClassRepository, ClassRepository>();
             services.AddTransient<IContentRepository, ContentRepository>();
             services.AddTransient<ILessonRepository, LessonRepository>();
+            services.AddTransient<IQuizRepository, QuizRepository>();
+            services.AddTransient<IQuizReportRepository, QuizReportRepository>();
+            services.AddTransient<ILessonReportRepository, LessonReportRepository>();
+
 
 
             //newtonsoft json

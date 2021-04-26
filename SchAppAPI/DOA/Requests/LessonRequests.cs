@@ -42,4 +42,24 @@ namespace SchAppAPI.DOA.Requests
         public string Thumbnail { get; set; }
 
     }
+
+    public class CreateLessonReportRequest
+    {
+        public Guid LessonId { get; set; }
+
+        public string CompletionRate { get; set; }
+        public string TimeSpentOnModule { get; set; }
+
+        public bool IsCompleted { get; set; }
+    }
+
+    public class UpdateLessonReportRequest
+    {
+        public Guid LessonId { get; set; }
+
+        public string CompletionRate { get; set; }
+        public string TimeSpentOnModule { get; set; }
+
+        public bool IsCompleted { get; set; }
+    }
 }
