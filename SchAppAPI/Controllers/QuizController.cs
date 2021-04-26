@@ -78,7 +78,7 @@ namespace SchAppAPI.Controllers
             };
             await this.quizRepository.Add(quizToCreate);
             await this.quizRepository.SaveChangesAsync();
-            return Ok(new { status = "success", message = "Class successfully created" });
+            return Ok(new { status = "success", message = "Quiz successfully created" });
         }
 
     }
