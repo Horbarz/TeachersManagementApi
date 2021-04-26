@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using SchAppAPI.DOA.Requests;
@@ -15,11 +16,17 @@ namespace SchAppAPI.Controllers
     {
         public readonly ILessonRepository lessonRepository;
         public readonly IContentRepository contentRepository;
+        public readonly ILessonReportRepository lessonReportRepository;
 
-        public LessonController(ILessonRepository lessonRepository, IContentRepository contentRepository)
+
+        public LessonController(
+            ILessonRepository lessonRepository,
+            IContentRepository contentRepository,
+            ILessonReportRepository lessonReportRepository)
         {
             this.lessonRepository = lessonRepository;
             this.contentRepository = contentRepository;
+            this.lessonReportRepository = lessonReportRepository;
         }
 
         [HttpGet]
@@ -102,5 +109,60 @@ namespace SchAppAPI.Controllers
             return Ok(new { status = "success", message = "Lesson successfully created" });
         }
 
+        [HttpPost]
+        [Route("Report")]
+        public async Task<IActionResult> CreatelessonReport(CreateLessonReportRequest lessonReportRequest)
+        {
+
+            if (!ModelState.IsValid) BadRequest();
+
+
+            if (!Guid.TryParse(User.Claims.Where(c => c.Type == "Id")
+                   .Select(c => c.Value).SingleOrDefault(), out var userId))
+            {
+                BadRequest("Invalid User Id");
+            }
+
+            var lessonReportToCreate = new LessonReport
+            {
+                LessonId = lessonReportRequest.LessonId,
+                TeacherId = userId,
+                IsCompleted = lessonReportRequest.IsCompleted,
+                TimeSpentOnModule = Convert.ToString(lessonReportRequest.TimeSpentOnModule),
+                CompletionRate = Convert.ToString(lessonReportRequest.TimeSpentOnModule)
+            };
+
+            await this.lessonReportRepository.Add(lessonReportToCreate);
+            await this.lessonRepository.SaveChangesAsync();
+
+            return Ok();
+        }
+
+        [HttpPut]
+        [Route("Report")]
+        public async Task<IActionResult> UpdatelessonReport(UpdateLessonReportRequest lessonReportRequest)
+        {
+
+            if (!ModelState.IsValid) BadRequest();
+
+            if(!Guid.TryParse(User.Identity.Name, out var userId))
+            {
+                BadRequest("Invalid User Id");
+            }
+
+            var lessonReportToCreate = new LessonReport
+            {
+                LessonId = lessonReportRequest.LessonId,
+                TeacherId = userId,
+                IsCompleted = lessonReportRequest.IsCompleted,
+                TimeSpentOnModule = Convert.ToString(lessonReportRequest.TimeSpentOnModule),
+                CompletionRate = Convert.ToString(lessonReportRequest.TimeSpentOnModule)
+            };
+
+            this.lessonReportRepository.Update(lessonReportToCreate);
+            await this.lessonRepository.SaveChangesAsync();
+
+            return Ok();
+        }
     }
 }
