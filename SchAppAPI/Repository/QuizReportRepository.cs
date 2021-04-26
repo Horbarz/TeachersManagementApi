@@ -1,5 +1,4 @@
 ﻿using SchAppAPI.Contexts;
-using SchAppAPI.Models;
 using SchAppAPI.Models.Lesson;
 using System;
 using System.Collections.Generic;
@@ -8,10 +7,11 @@ using System.Threading.Tasks;
 
 namespace SchAppAPI.Repository
 {
-    public class ContentRepository : BaseRepository<Content>, IContentRepository
+    public class QuizReportRepository: BaseRepository<QuizReport>, IQuizReportRepository
     {
-        public ContentRepository(SchoolDbContext context) : base(context)
+        public QuizReportRepository(SchoolDbContext context) : base(context)
         {
+
         }
     }
 }

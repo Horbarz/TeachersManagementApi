@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchAppAPI.Contexts;
 
 namespace SchAppAPI.Migrations
 {
     [DbContext(typeof(SchoolDbContext))]
-    partial class SchoolDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210425061425_lessonreport")]
+    partial class lessonreport
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -197,9 +199,6 @@ namespace SchAppAPI.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("LessonId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
@@ -211,8 +210,6 @@ namespace SchAppAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LessonId");
-
                     b.ToTable("Contents");
                 });
 
@@ -223,6 +220,9 @@ namespace SchAppAPI.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("ClassId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ContentId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedOn")
@@ -240,6 +240,9 @@ namespace SchAppAPI.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("QuizId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("SubjectId")
                         .HasColumnType("uniqueidentifier");
 
@@ -252,6 +255,10 @@ namespace SchAppAPI.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ClassId");
+
+                    b.HasIndex("ContentId");
+
+                    b.HasIndex("QuizId");
 
                     b.HasIndex("SubjectId");
 
@@ -269,26 +276,11 @@ namespace SchAppAPI.Migrations
                     b.Property<string>("CompletionRate")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsCompleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<string>("TimeSpentOnModule")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdatedOn")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -361,9 +353,6 @@ namespace SchAppAPI.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<Guid>("LessonId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -375,8 +364,6 @@ namespace SchAppAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("LessonId");
-
                     b.ToTable("Quizzes");
                 });
 
@@ -387,18 +374,6 @@ namespace SchAppAPI.Migrations
 
                     b.Property<Guid>("TeacherId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
 
                     b.Property<string>("MarkObtainable")
                         .HasColumnType("nvarchar(max)");
@@ -414,9 +389,6 @@ namespace SchAppAPI.Migrations
 
                     b.Property<string>("TimeTaken")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdatedOn")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("UserId")
                         .HasColumnType("nvarchar(450)");
@@ -600,22 +572,23 @@ namespace SchAppAPI.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SchAppAPI.Models.Lesson.Content", b =>
-                {
-                    b.HasOne("SchAppAPI.Models.Lesson.Lesson", "Lesson")
-                        .WithMany("Content")
-                        .HasForeignKey("LessonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Lesson");
-                });
-
             modelBuilder.Entity("SchAppAPI.Models.Lesson.Lesson", b =>
                 {
                     b.HasOne("SchAppAPI.Models.Class", "Class")
                         .WithMany()
                         .HasForeignKey("ClassId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SchAppAPI.Models.Lesson.Content", "Content")
+                        .WithMany()
+                        .HasForeignKey("ContentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SchAppAPI.Models.Lesson.Quiz", "Quiz")
+                        .WithMany()
+                        .HasForeignKey("QuizId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -626,6 +599,10 @@ namespace SchAppAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("Class");
+
+                    b.Navigation("Content");
+
+                    b.Navigation("Quiz");
 
                     b.Navigation("Subject");
                 });
@@ -650,23 +627,12 @@ namespace SchAppAPI.Migrations
             modelBuilder.Entity("SchAppAPI.Models.Lesson.Question", b =>
                 {
                     b.HasOne("SchAppAPI.Models.Lesson.Quiz", "Quiz")
-                        .WithMany("Questions")
+                        .WithMany("Question")
                         .HasForeignKey("QuizId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Quiz");
-                });
-
-            modelBuilder.Entity("SchAppAPI.Models.Lesson.Quiz", b =>
-                {
-                    b.HasOne("SchAppAPI.Models.Lesson.Lesson", "Lesson")
-                        .WithMany("Quiz")
-                        .HasForeignKey("LessonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Lesson");
                 });
 
             modelBuilder.Entity("SchAppAPI.Models.Lesson.QuizReport", b =>
@@ -686,16 +652,9 @@ namespace SchAppAPI.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("SchAppAPI.Models.Lesson.Lesson", b =>
-                {
-                    b.Navigation("Content");
-
-                    b.Navigation("Quiz");
-                });
-
             modelBuilder.Entity("SchAppAPI.Models.Lesson.Quiz", b =>
                 {
-                    b.Navigation("Questions");
+                    b.Navigation("Question");
                 });
 #pragma warning restore 612, 618
         }
