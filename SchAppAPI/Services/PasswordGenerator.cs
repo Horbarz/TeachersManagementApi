@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Identity;
 
-namespace ihsapi.Services
+namespace SchAppAPI.Services
 {
     public class PasswordGenerator
     {

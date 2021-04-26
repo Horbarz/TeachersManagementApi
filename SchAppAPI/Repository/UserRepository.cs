@@ -8,7 +8,7 @@ using SchAppAPI.Models;
 
 namespace SchAppAPI.Repository
 {
-    public class UserRepository:IUserRepository
+    public class UserRepository : IUserRepository
     {
 
         private readonly SchoolDbContext context;
@@ -27,6 +27,15 @@ namespace SchAppAPI.Repository
                 var teachers = userManager.GetUsersInRoleAsync(UserRoles.User.ToString()).Result;
                 return teachers.OfType<User>().ToList();
             }
+        }
+        public async Task<User> GetSingleTeacher(string uid)
+        {
+            if (String.IsNullOrEmpty(uid))
+            {
+                throw new ArgumentNullException(nameof(uid));
+            }
+            var res = await userManager.FindByIdAsync(uid);
+            return res;
         }
     }
 }
