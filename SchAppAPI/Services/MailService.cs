@@ -16,7 +16,7 @@ namespace SchAppAPI.Services
 
             var email = new MimeMessage();
             email.Sender = MailboxAddress.Parse("horbarz007@gmail.com");
-            email.To.Add(MailboxAddress.Parse(mailRequest.ToEmail));
+            //email.To.Add(MailboxAddress.Parse(mailRequest.ToEmail));
             email.Subject = mailRequest.Subject;
             var builder = new BodyBuilder();
 

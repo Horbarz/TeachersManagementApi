@@ -10,6 +10,9 @@ namespace SchAppAPI.DOA.Requests
         public string Name { get; set; }
         [Required(ErrorMessage = "Quiz type is required")]
         public QuizType QuizType { get; set; }
+
+        [Required(ErrorMessage = "Lesson Id is required")]
+        public Guid LessonId { get; set; }
     }
 
     public class UpdateQuizRequests
@@ -20,5 +23,8 @@ namespace SchAppAPI.DOA.Requests
         public string Name { get; set; }
         [Required(ErrorMessage = "Quiz type is required")]
         public QuizType QuizType { get; set; }
+
+        [Required(ErrorMessage = "Lesson Id is required")]
+        public Guid LessonId { get; set; }
     }
 }

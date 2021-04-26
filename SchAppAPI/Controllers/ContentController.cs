@@ -37,7 +37,7 @@ namespace SchAppAPI.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> UpdateClass(UpdateContentRequest contentRequest)
+        public async Task<IActionResult> UpdateContent(UpdateContentRequest contentRequest)
         {
             if (!ModelState.IsValid) BadRequest();
 
