@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using SchAppAPI.Models;
 
@@ -13,6 +14,7 @@ namespace SchAppAPI.DOA.Requests
 
         [Required(ErrorMessage = "Lesson Id is required")]
         public Guid LessonId { get; set; }
+
     }
 
     public class UpdateQuizRequests
@@ -26,5 +28,18 @@ namespace SchAppAPI.DOA.Requests
 
         [Required(ErrorMessage = "Lesson Id is required")]
         public Guid LessonId { get; set; }
+    }
+
+    public class GradeQuizRequest
+    {
+        public Guid QuizId { get; set; }
+        public string TimeTaken { get; set; }
+        public string PercentageCompletion { get; set; }
+        public List<AnswerRequest> Answers { get; set; }
+    }
+    public class AnswerRequest
+    {
+        public Guid QuestionId { get; set; }
+        public string Answer { get; set; }
     }
 }
