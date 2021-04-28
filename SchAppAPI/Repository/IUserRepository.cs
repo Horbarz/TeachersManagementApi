@@ -9,5 +9,7 @@ namespace SchAppAPI.Repository
     {
         Task<List<User>> GetAllTeachers();
         Task<User> GetSingleTeacher(string uid);
+
+        List<string> GetAllTokens();
     }
 }

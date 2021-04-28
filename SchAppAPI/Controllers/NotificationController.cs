@@ -20,16 +20,17 @@ namespace SchAppAPI.Controllers
 
         public NotificationController(IMobileMessagingClient messagingClient,
                                 INotificationRepository notificationRepository,
-                                UserManager<User> userManager)
+                                UserManager<User> userManager, IUserRepository userRepository)
         {
             this.messagingClient = messagingClient;
             this.notificationRepository = notificationRepository;
             this.userManager = userManager;
+            this.userRepository = userRepository;
         }
 
         [HttpPost]
         [Route("sendNotification")]
-        public async Task<IActionResult> SendPushNotification(CreateNotificationRequest notification)
+        public async Task<IActionResult> SendPushNotification(CreateSingleNotificationRequest notification)
         {
             var notificationToCreate = new Notification
             {
@@ -44,7 +45,7 @@ namespace SchAppAPI.Controllers
             await this.notificationRepository.Add(notificationToCreate);
             await this.notificationRepository.SaveChangesAsync();
 
-            var result = messagingClient.SendNotification(token2, notification.Title, notification.Content);
+            var result = messagingClient.SendNotification(notification.DeviceId, notification.Title, notification.Content).ConfigureAwait(true);
 
             return Ok(new { Status = "Successful" });
         }
@@ -59,16 +60,18 @@ namespace SchAppAPI.Controllers
                 Subject = notification.Subject,
                 Content = notification.Content
             };
-            var registrationTokens = new List<string>() { "", "" };
-            string token = "f1mCeFOHRJylzuxDeplRGQ:APA91bEYO7RqMcTW5-eEQpDq2gD92Ee9wRawq8Pvrh23vfwpL1Nkwt7OJd45lbUye5e-5GwT2goY9D0fqFJCRDJQ_70ouKOdPnencG5KZDcmk4zO6xdrhzx0Mc9J612fr271BtFRymMf"; //get device fcm token and pass here
+            var registrationTokens = userRepository.GetAllTokens();
+
+            //get all teachers token and store in a list
+            //string token = "f1mCeFOHRJylzuxDeplRGQ:APA91bEYO7RqMcTW5-eEQpDq2gD92Ee9wRawq8Pvrh23vfwpL1Nkwt7OJd45lbUye5e-5GwT2goY9D0fqFJCRDJQ_70ouKOdPnencG5KZDcmk4zO6xdrhzx0Mc9J612fr271BtFRymMf"; //get device fcm token and pass here
 
             //save to database
             await this.notificationRepository.Add(notificationToCreate);
             await this.notificationRepository.SaveChangesAsync();
 
-            var result = messagingClient.SendNotification(token, notification.Title, notification.Content);
+            var result = messagingClient.SendMultipleNotifications(registrationTokens, notification.Title, notification.Content).ConfigureAwait(true);
 
-            return Ok(new { Status = "Successful" });
+            return Ok(new { Status = "Successful", Message = "Notification sent", tokens = registrationTokens });
         }
     }
 }

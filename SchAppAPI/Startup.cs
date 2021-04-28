@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -35,6 +37,9 @@ namespace SchAppAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+
+            GoogleCredential googleCredential = GoogleCredential.FromFile("ihsapi.json").CreateScoped("https://www.googleapis.com/auth/firebase.messaging");
+            FirebaseApp.Create(new AppOptions() { Credential = googleCredential });
 
             services.AddControllers();
 
