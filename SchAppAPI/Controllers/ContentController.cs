@@ -5,6 +5,7 @@ using SchAppAPI.DOA.Requests;
 using SchAppAPI.Models;
 using SchAppAPI.Models.Lesson;
 using SchAppAPI.Repository;
+using SchAppAPI.Services;
 
 namespace SchAppAPI.Controllers
 {
@@ -13,10 +14,12 @@ namespace SchAppAPI.Controllers
     public class ContentController : ControllerBase
     {
         public readonly IContentRepository contentRepository;
+        public readonly IMediaService mediaService;
 
-        public ContentController(IContentRepository contentRepository)
+        public ContentController(IContentRepository contentRepository, IMediaService mediaService)
         {
             this.contentRepository = contentRepository;
+            this.mediaService = mediaService;
         }
 
         [HttpGet]
@@ -64,27 +67,41 @@ namespace SchAppAPI.Controllers
             return Ok();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateContent(CreateContentRequest contentRequest)
+        [HttpPost("Upload")]
+        public async Task<IActionResult> UploadContent([FromForm] UploadContentRequest contentRequest)
         {
-
+            
             if (!ModelState.IsValid) BadRequest();
+
+            var isValidContentType =  Enum.TryParse(contentRequest.contentType, out ContentType uploadedContentType);
+            if (!isValidContentType) return BadRequest("Invalid content Type");
+
+            var contentUrl = string.Empty;
+            switch(uploadedContentType)
+            {
+                case ContentType.Text:
+                    return BadRequest("Text content type not allowed");
+                    break;
+
+                case ContentType.Image:
+                    contentUrl = await mediaService.UploadImageContent(contentRequest.ContentFile.FileName, contentRequest.ContentFile.OpenReadStream());
+                    break;
+
+                case ContentType.Video:
+                    contentUrl = await mediaService.UploadVideoContent(contentRequest.ContentFile.FileName, contentRequest.ContentFile.OpenReadStream());
+                    break;
+            }
 
             var contentToCreate = new Content
             {
                 Title = contentRequest.Title,
-                contentType = contentRequest.contentType,
-                Body = contentRequest.Body,
-
+                contentType = uploadedContentType,
+                Body = contentUrl,
+                LessonId = contentRequest.LessonId
             };
             await this.contentRepository.Add(contentToCreate);
             await this.contentRepository.SaveChangesAsync();
             return Ok(new { status = "success", message = "Content successfully created" });
         }
-
-
-
-
-
     }
 }
