@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace SchAppAPI.Models
 {
-    public class User: IdentityUser
+    public class User : IdentityUser
     {
 
         public string FirstName { get; set; }
@@ -25,5 +25,7 @@ namespace SchAppAPI.Models
         public SchoolType SchoolType { get; set; }
 
         public bool active { get; set; } = false;
+
+        public string DeviceId { get; set; }
     }
 }

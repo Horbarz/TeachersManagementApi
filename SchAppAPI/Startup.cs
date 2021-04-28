@@ -52,8 +52,9 @@ namespace SchAppAPI
             services.AddTransient<IQuizRepository, QuizRepository>();
             services.AddTransient<IQuizReportRepository, QuizReportRepository>();
             services.AddTransient<ILessonReportRepository, LessonReportRepository>();
-
+            services.AddTransient<IMobileMessagingClient, MobileMessagingClient>();
             services.AddTransient<IEmailService, EmailService>();
+            services.AddTransient<INotificationRepository, NotificationRepository>();
 
             services.Configure<SMTPConfigModel>(Configuration.GetSection("SMTPConfig"));
 

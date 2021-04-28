@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using SchAppAPI.Contexts;
 using SchAppAPI.Models;
 
 namespace SchAppAPI.Controllers
@@ -12,12 +14,16 @@ namespace SchAppAPI.Controllers
     {
         private readonly RoleManager<IdentityRole> roleManager;
 
-        public RolesController(RoleManager<IdentityRole> roleManager)
+        private readonly SchoolDbContext context;
+
+
+        public RolesController(RoleManager<IdentityRole> roleManager, SchoolDbContext context)
         {
             this.roleManager = roleManager;
+            this.context = context;
         }
 
-        [Route("create_role")]
+
         [HttpPost]
         public async Task<IActionResult> CreateRoles(Roles rolesModel)
         {
@@ -29,5 +35,13 @@ namespace SchAppAPI.Controllers
 
             return Ok(new { status = "success", role = rolesModel.UserRoles });
         }
+
+        // public async Task<IActionResult> GetRoles(){
+        //     var roleStore = new RoleStore<IdentityRole>(context);
+        //     // var roleMngr = new RoleManager<IdentityRole>(roleStore); 
+
+        //     // var roles = roleMngr.Roles.ToList();
+
+        // }
     }
 }
