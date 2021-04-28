@@ -20,6 +20,7 @@ using SchAppAPI.Contexts;
 using SchAppAPI.Models;
 using SchAppAPI.Repository;
 using SchAppAPI.Services;
+using SchAppAPI.Settings;
 
 namespace SchAppAPI
 {
@@ -52,11 +53,12 @@ namespace SchAppAPI
             services.AddTransient<IQuizRepository, QuizRepository>();
             services.AddTransient<IQuizReportRepository, QuizReportRepository>();
             services.AddTransient<ILessonReportRepository, LessonReportRepository>();
+            services.AddSingleton<IMediaService, MediaService>();
 
             services.AddTransient<IEmailService, EmailService>();
 
             services.Configure<SMTPConfigModel>(Configuration.GetSection("SMTPConfig"));
-
+            services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinaryConfig"));
             //newtonsoft json
 
             services.AddControllers().AddNewtonsoftJson(options =>
