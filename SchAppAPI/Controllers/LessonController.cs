@@ -53,7 +53,7 @@ namespace SchAppAPI.Controllers
                 lesson => lesson.Id == id,
                 null,
                 $"{nameof(Lesson.Subject)},{nameof(Lesson.Class)},{nameof(Lesson.Contents)},{nameof(Lesson.Quiz)}");
-            if(lesson == null)
+            if (lesson == null)
             {
                 return NotFound("Lesson not found");
             }
@@ -70,6 +70,7 @@ namespace SchAppAPI.Controllers
             var lessonToUpdate = new Lesson
             {
                 Id = lessonRequest.Id,
+                Name = lessonRequest.Name,
                 LessonNumber = lessonRequest.LessonNumber,
                 SubjectId = lessonRequest.SubjectId,
                 ClassId = lessonRequest.ClassId,
@@ -77,15 +78,15 @@ namespace SchAppAPI.Controllers
             };
             this.lessonRepository.Update(lessonToUpdate);
 
-            var content = new Content
-            {
-                LessonId = lessonToUpdate.Id,
-                contentType = ContentType.Text,
-                Body = lessonRequest.Content,
-                Title = lessonRequest.Name
-            };
-            
-            this.contentRepository.Update(content);
+            // var content = new Content
+            // {
+            //     LessonId = lessonToUpdate.Id,
+            //     contentType = ContentType.Text,
+            //     Body = lessonRequest.Content,
+            //     Title = lessonRequest.Name
+            // };
+
+            // this.contentRepository.Update(content);
             await this.lessonRepository.SaveChangesAsync();
             return Ok(new { status = "success", message = "lesson successfully updated" });
         }
@@ -116,7 +117,7 @@ namespace SchAppAPI.Controllers
                 Thumbnail = lessonRequest.Thumbnail
             };
             await this.lessonRepository.Add(lessonToCreate);
-           
+
             var content = new Content
             {
                 LessonId = lessonToCreate.Id,
@@ -125,7 +126,7 @@ namespace SchAppAPI.Controllers
                 Title = lessonRequest.Name
 
             };
-            
+
             await this.contentRepository.Add(content);
             await this.lessonRepository.SaveChangesAsync();
 
