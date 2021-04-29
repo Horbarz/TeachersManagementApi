@@ -22,7 +22,7 @@ namespace SchAppAPI.Contexts
             base.OnModelCreating(builder);
 
             builder.Entity<LessonReport>().HasKey(lr => new { lr.LessonId, lr.TeacherId });
-            builder.Entity<QuizReport>().HasKey(qr => new { qr.QuizId, qr.TeacherId});
+            builder.Entity<QuizReport>().HasKey(qr => new { qr.QuizId, qr.TeacherId });
 
             builder.Entity<QuizReport>().Property(qr => qr.QuizUserAnswers).HasConversion(
                 qua => JsonConvert.SerializeObject(qua, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }),
@@ -32,7 +32,7 @@ namespace SchAppAPI.Contexts
                 (l, r) => JsonConvert.SerializeObject(l) == JsonConvert.SerializeObject(r),
                 v => v == null ? 0 : JsonConvert.SerializeObject(v).GetHashCode(),
                 v => JsonConvert.DeserializeObject<IList<QuizUserAnswer>>(JsonConvert.SerializeObject(v)))
-                
+
              );
         }
 
@@ -44,6 +44,8 @@ namespace SchAppAPI.Contexts
         public DbSet<Question> Questions { get; set; }
         public DbSet<QuizReport> QuizReports { get; set; }
         public DbSet<LessonReport> LessonReports { get; set; }
+
+        public DbSet<Notification> Notifications { get; set; }
 
         public override int SaveChanges()
         {

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchAppAPI.Contexts;
 
 namespace SchAppAPI.Migrations
 {
     [DbContext(typeof(SchoolDbContext))]
-    partial class SchoolDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210428094807_ThumbnailToColumnTableMigerations")]
+    partial class ThumbnailToColumnTableMigerations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -510,9 +512,6 @@ namespace SchAppAPI.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("DeviceId")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -576,6 +575,9 @@ namespace SchAppAPI.Migrations
 
                     b.Property<bool>("active")
                         .HasColumnType("bit");
+
+                    b.Property<string>("token")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

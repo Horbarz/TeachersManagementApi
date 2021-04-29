@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -37,6 +39,9 @@ namespace SchAppAPI
         public void ConfigureServices(IServiceCollection services)
         {
 
+            GoogleCredential googleCredential = GoogleCredential.FromFile("ihsapi.json").CreateScoped("https://www.googleapis.com/auth/firebase.messaging");
+            FirebaseApp.Create(new AppOptions() { Credential = googleCredential });
+
             services.AddControllers();
 
             //entity framework services
@@ -53,8 +58,10 @@ namespace SchAppAPI
             services.AddTransient<IQuizRepository, QuizRepository>();
             services.AddTransient<IQuizReportRepository, QuizReportRepository>();
             services.AddTransient<ILessonReportRepository, LessonReportRepository>();
+            services.AddTransient<INotificationRepository, NotificationRepository>();
+            
+            services.AddTransient<IMobileMessagingClient, MobileMessagingClient>();
             services.AddSingleton<IMediaService, MediaService>();
-
             services.AddTransient<IEmailService, EmailService>();
 
             services.Configure<SMTPConfigModel>(Configuration.GetSection("SMTPConfig"));

@@ -30,5 +30,7 @@ namespace SchAppAPI.Models
 
         public SchoolType SchoolType { get; set; }
 
+        public string DeviceToken { get; set; }
+
     }
 }

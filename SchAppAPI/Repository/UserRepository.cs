@@ -28,6 +28,25 @@ namespace SchAppAPI.Repository
                 return teachers.OfType<User>().ToList();
             }
         }
+
+        public List<string> GetAllTokens()
+        {
+            var registrationTokens = new List<string>();
+
+            //get all teachers token and store in a list
+            var teachers = userManager.GetUsersInRoleAsync(UserRoles.User.ToString()).Result;
+            teachers = teachers.OfType<User>().ToList();
+            foreach (var u in teachers)
+            {
+                var teacherToken = u.DeviceId;
+                if (teacherToken != null && teacherToken.Length > 100)
+                {
+                    registrationTokens.Add(teacherToken);
+                }
+            }
+            return registrationTokens;
+        }
+
         public async Task<User> GetSingleTeacher(string uid)
         {
             if (String.IsNullOrEmpty(uid))
