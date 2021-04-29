@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 using SchAppAPI.Models;
 
 namespace SchAppAPI.DOA.Requests
@@ -21,6 +22,23 @@ namespace SchAppAPI.DOA.Requests
 
     }
 
+    public class UploadContentRequest
+    {
+        [Required(ErrorMessage = "Content title is required")]
+        public string Title { get; set; }
+
+        [Required(ErrorMessage = "Content type is required")]
+        public string contentType { get; set; }
+
+        //[Required(ErrorMessage = "Attach content file required")]
+        public IFormFile ContentFile { get; set; }
+
+        [Required(ErrorMessage = "Lesson Id is required")]
+        public Guid LessonId { get; set; }
+
+
+    }
+
     public class UpdateContentRequest
     {
 
@@ -34,7 +52,12 @@ namespace SchAppAPI.DOA.Requests
 
         [Required(ErrorMessage = "Content body is required")]
         public string Body { get; set; }
+
         [Required(ErrorMessage = "Lesson Id is required")]
         public Guid LessonId { get; set; }
+
+        public IFormFile ContentFile { get; set; }
     }
+
+
 }
