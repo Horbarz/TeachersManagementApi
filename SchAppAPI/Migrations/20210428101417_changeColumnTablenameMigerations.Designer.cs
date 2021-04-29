@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchAppAPI.Contexts;
 
 namespace SchAppAPI.Migrations
 {
     [DbContext(typeof(SchoolDbContext))]
-    partial class SchoolDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210428101417_changeColumnTablenameMigerations")]
+    partial class changeColumnTablenameMigerations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -470,7 +472,6 @@ namespace SchAppAPI.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Details")
-
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
@@ -645,7 +646,7 @@ namespace SchAppAPI.Migrations
             modelBuilder.Entity("SchAppAPI.Models.Lesson.Content", b =>
                 {
                     b.HasOne("SchAppAPI.Models.Lesson.Lesson", "Lesson")
-                        .WithMany("Contents")
+                        .WithMany("Content")
                         .HasForeignKey("LessonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -730,7 +731,7 @@ namespace SchAppAPI.Migrations
 
             modelBuilder.Entity("SchAppAPI.Models.Lesson.Lesson", b =>
                 {
-                    b.Navigation("Contents");
+                    b.Navigation("Content");
 
                     b.Navigation("Quiz");
                 });

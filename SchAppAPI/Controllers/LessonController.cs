@@ -84,6 +84,7 @@ namespace SchAppAPI.Controllers
                 Body = lessonRequest.Content,
                 Title = lessonRequest.Name
             };
+            
             this.contentRepository.Update(content);
             await this.lessonRepository.SaveChangesAsync();
             return Ok(new { status = "success", message = "lesson successfully updated" });
@@ -108,13 +109,14 @@ namespace SchAppAPI.Controllers
 
             var lessonToCreate = new Lesson
             {
+                Name = lessonRequest.Name,
                 LessonNumber = lessonRequest.LessonNumber,
                 SubjectId = lessonRequest.SubjectId,
                 ClassId = lessonRequest.ClassId,
                 Thumbnail = lessonRequest.Thumbnail
             };
             await this.lessonRepository.Add(lessonToCreate);
-
+           
             var content = new Content
             {
                 LessonId = lessonToCreate.Id,
@@ -123,6 +125,7 @@ namespace SchAppAPI.Controllers
                 Title = lessonRequest.Name
 
             };
+            
             await this.contentRepository.Add(content);
             await this.lessonRepository.SaveChangesAsync();
 
@@ -165,7 +168,7 @@ namespace SchAppAPI.Controllers
 
             if (!ModelState.IsValid) BadRequest();
 
-            if(!Guid.TryParse(User.Identity.Name, out var userId))
+            if (!Guid.TryParse(User.Identity.Name, out var userId))
             {
                 BadRequest("Invalid User Id");
             }

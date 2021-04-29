@@ -69,6 +69,12 @@ namespace SchAppAPI.Controllers
             //check if user exists 
             if (user != null && result.Succeeded)
             {
+                if (model.DeviceToken != null)
+                {
+                    //update deviceToken
+                    user.DeviceId = model.DeviceToken;
+                }
+                await userManager.UpdateAsync(user);
                 //check the user role
                 //pass data into claims
                 var userRoles = await userManager.GetRolesAsync(user);
@@ -77,6 +83,7 @@ namespace SchAppAPI.Controllers
                     new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
                     new Claim(ClaimTypes.Email,user.Email),
                     new Claim("Id",user.Id),
+                    new Claim("DeviceId",model.DeviceToken)
                 };
 
                 //Add new claim
@@ -134,7 +141,6 @@ namespace SchAppAPI.Controllers
 
             User user = new User()
             {
-
                 UserName = model.Email,
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
@@ -147,6 +153,7 @@ namespace SchAppAPI.Controllers
                 City = model.City,
                 Experience = model.Experience,
                 SchoolType = model.SchoolType,
+                DeviceId = model.DeviceToken
 
             };
             var result = await userManager.CreateAsync(user, model.Password);

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchAppAPI.Contexts;
 
 namespace SchAppAPI.Migrations
 {
     [DbContext(typeof(SchoolDbContext))]
-    partial class SchoolDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210428094807_ThumbnailToColumnTableMigerations")]
+    partial class ThumbnailToColumnTableMigerations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -470,7 +472,6 @@ namespace SchAppAPI.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Details")
-
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
@@ -509,9 +510,6 @@ namespace SchAppAPI.Migrations
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DeviceId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
@@ -577,6 +575,9 @@ namespace SchAppAPI.Migrations
 
                     b.Property<bool>("active")
                         .HasColumnType("bit");
+
+                    b.Property<string>("token")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -645,7 +646,7 @@ namespace SchAppAPI.Migrations
             modelBuilder.Entity("SchAppAPI.Models.Lesson.Content", b =>
                 {
                     b.HasOne("SchAppAPI.Models.Lesson.Lesson", "Lesson")
-                        .WithMany("Contents")
+                        .WithMany("Content")
                         .HasForeignKey("LessonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -730,7 +731,7 @@ namespace SchAppAPI.Migrations
 
             modelBuilder.Entity("SchAppAPI.Models.Lesson.Lesson", b =>
                 {
-                    b.Navigation("Contents");
+                    b.Navigation("Content");
 
                     b.Navigation("Quiz");
                 });

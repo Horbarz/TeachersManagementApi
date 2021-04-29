@@ -10,5 +10,7 @@ namespace SchAppAPI.Models
 
         [Required(ErrorMessage = "Password is required")]
         public string Password { get; set; }
+        public string DeviceToken { get; set; }
+
     }
 }
