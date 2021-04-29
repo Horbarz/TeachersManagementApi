@@ -67,11 +67,14 @@ namespace SchAppAPI
             services.Configure<SMTPConfigModel>(Configuration.GetSection("SMTPConfig"));
             services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinaryConfig"));
             //newtonsoft json
-
+          
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
+            
+            services.AddAutoMapper(typeof(Startup));
 
+          
             services.AddIdentity<User, IdentityRole>()
                .AddEntityFrameworkStores<SchoolDbContext>()
                .AddDefaultTokenProviders();

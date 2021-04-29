@@ -43,7 +43,7 @@ namespace SchAppAPI.Repository
         public async Task<IEnumerable<TEntity>> Get(Expression<Func<TEntity, bool>> filter = null, Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null, string includeProperties = "")
         {
             IQueryable<TEntity> query = _dbSet;
-            if (filter != null) query.Where(filter);
+            if (filter != null) query = query.Where(filter);
 
             if (includeProperties != null)
             {

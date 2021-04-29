@@ -1,8 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using SchAppAPI.DOA.Requests;
+using SchAppAPI.DOA.Responses;
 using SchAppAPI.Models;
 using SchAppAPI.Models.Lesson;
 using SchAppAPI.Repository;
@@ -17,32 +20,46 @@ namespace SchAppAPI.Controllers
         public readonly ILessonRepository lessonRepository;
         public readonly IContentRepository contentRepository;
         public readonly ILessonReportRepository lessonReportRepository;
+        public readonly IMapper mapper;
 
 
         public LessonController(
             ILessonRepository lessonRepository,
             IContentRepository contentRepository,
-            ILessonReportRepository lessonReportRepository)
+            ILessonReportRepository lessonReportRepository,
+            IMapper mapper)
         {
             this.lessonRepository = lessonRepository;
             this.contentRepository = contentRepository;
             this.lessonReportRepository = lessonReportRepository;
+            this.mapper = mapper;
+
         }
 
         [HttpGet]
         [Route("getAll")]
         public async Task<IActionResult> GetAllLessons()
         {
-            var lessons = await this.lessonRepository.Get(includeProperties: nameof(Lesson.Contents));
-            return Ok(lessons);
+            var lessons = await this.lessonRepository.Get(includeProperties: $"{nameof(Lesson.Subject)},{nameof(Lesson.Class)}");
+            var lessonToReturn = this.mapper.Map<List<GetAllLessonReponse>>(lessons);
+            return Ok(lessonToReturn);
         }
         [HttpGet("{id}")]
         public async Task<IActionResult> GetLesson(Guid id)
         {
             if (!ModelState.IsValid) BadRequest();
 
-            var lesson = await this.lessonRepository.GetById(id);
-            return Ok(lesson);
+            var lesson = await this.lessonRepository.Get(
+                lesson => lesson.Id == id,
+                null,
+                $"{nameof(Lesson.Subject)},{nameof(Lesson.Class)},{nameof(Lesson.Contents)},{nameof(Lesson.Quiz)}");
+            if(lesson == null)
+            {
+                return NotFound("Lesson not found");
+            }
+            var lessonToReturn = this.mapper.Map<GetLessonReponse>(lesson.FirstOrDefault());
+
+            return Ok(lessonToReturn);
         }
 
         [HttpPut]
