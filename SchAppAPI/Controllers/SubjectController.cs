@@ -11,7 +11,7 @@ using static SchAppAPI.DOA.Responses.SubjectResponses;
 
 namespace SchAppAPI.Controllers
 {
-    //[Authorize]
+    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class SubjectController : ControllerBase
@@ -35,7 +35,7 @@ namespace SchAppAPI.Controllers
             var subjects = await this.subjectRepo.GetById(id);
             return Ok(subjects);
         }
-
+        [Authorize(Roles = ("Super-Admin, Admin"))]
         [HttpPut]
         public async Task<IActionResult> UpdateSubject(UpdateSubjectRequest subjectRequest)
         {
@@ -50,7 +50,7 @@ namespace SchAppAPI.Controllers
             return Ok();
         }
 
-
+        [Authorize(Roles = ("Super-Admin, Admin"))]
         [HttpDelete]
         public async Task<IActionResult> DeleteSubject(int id)
         {
@@ -60,7 +60,7 @@ namespace SchAppAPI.Controllers
             await this.subjectRepo.SaveChangesAsync();
             return Ok();
         }
-
+        [Authorize(Roles = ("Super-Admin, Admin"))]
         [HttpPost]
         public async Task<IActionResult> CreateSubject(CreateSubjectRequest subjectRequest)
         {
