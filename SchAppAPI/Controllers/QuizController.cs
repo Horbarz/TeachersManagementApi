@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SchAppAPI.DOA.Requests;
 using SchAppAPI.Models;
@@ -9,7 +10,7 @@ using SchAppAPI.Repository;
 
 namespace SchAppAPI.Controllers
 {
-
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class QuizController : ControllerBase
@@ -40,7 +41,7 @@ namespace SchAppAPI.Controllers
             var quiz = await this.quizRepository.GetById(id);
             return Ok(quiz);
         }
-
+        [Authorize(Roles = ("Editor, Super-Admin, Admin"))]
         [HttpPut]
         public async Task<IActionResult> UpdateQuiz(UpdateQuizRequests quizRequest)
         {
@@ -57,7 +58,7 @@ namespace SchAppAPI.Controllers
             return Ok(new { status = "success", message = "Quiz successfully updated" });
         }
 
-
+        [Authorize(Roles = ("Editor, Super-Admin, Admin"))]
         [HttpDelete]
         public async Task<IActionResult> DeleteQuiz(Guid id)
         {
@@ -68,6 +69,7 @@ namespace SchAppAPI.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = ("Editor, Super-Admin, Admin"))]
         [HttpPost]
         public async Task<IActionResult> CreateQuiz(CreateQuizRequests quizRequests)
         {
@@ -85,6 +87,7 @@ namespace SchAppAPI.Controllers
             return Ok(new { status = "success", message = "Quiz successfully created" });
         }
 
+        [Authorize(Roles = ("Teacher"))]
         [HttpPost]
         [Route("gradequiz")]
         public async Task<IActionResult> GradeQuiz(GradeQuizRequest gradeQuizRequest)

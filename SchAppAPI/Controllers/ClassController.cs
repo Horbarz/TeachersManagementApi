@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using SchAppAPI.DOA.Requests;
 using SchAppAPI.Models;
 using SchAppAPI.Repository;
@@ -11,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace SchAppAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ClassController : ControllerBase
@@ -35,7 +37,7 @@ namespace SchAppAPI.Controllers
             var subjects = await this.classRepo.GetById(id);
             return Ok(subjects);
         }
-
+        [Authorize(Roles = ("Super-Admin, Admin"))]
         [HttpPut]
         public async Task<IActionResult> UpdateClass(UpdateClassRequest classRequest)
         {
@@ -52,7 +54,7 @@ namespace SchAppAPI.Controllers
             return Ok();
         }
 
-
+        [Authorize(Roles = ("Super-Admin, Admin"))]
         [HttpDelete]
         public async Task<IActionResult> DeleteClass(Guid id)
         {
@@ -63,6 +65,7 @@ namespace SchAppAPI.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = ("Super-Admin, Admin"))]
         [HttpPost]
         public async Task<IActionResult> CreateClass(CreateClassRequest classRequest)
         {

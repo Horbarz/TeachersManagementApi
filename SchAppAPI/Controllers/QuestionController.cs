@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SchAppAPI.DOA.Requests;
 using SchAppAPI.Models;
@@ -8,7 +9,7 @@ using SchAppAPI.Repository;
 
 namespace SchAppAPI.Controllers
 {
-
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class QuestionController : ControllerBase
@@ -35,7 +36,7 @@ namespace SchAppAPI.Controllers
             var question = await this.questionRepository.GetById(id);
             return Ok(question);
         }
-
+        [Authorize(Roles = ("Editor, Super-Admin, Admin"))]
         [HttpPut]
         public async Task<IActionResult> UpdateQuestions(UpdateQuestionRequest questionRequest)
         {
@@ -55,9 +56,9 @@ namespace SchAppAPI.Controllers
             return Ok(new { status = "success", message = "Question successfully updated" });
         }
 
-
+        [Authorize(Roles = ("Super-Admin, Admin"))]
         [HttpDelete]
-        public async Task<IActionResult> DeleteClass(Guid id)
+        public async Task<IActionResult> DeleteQuestion(Guid id)
         {
             if (!ModelState.IsValid) BadRequest();
 
@@ -66,6 +67,7 @@ namespace SchAppAPI.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = ("Editor, Super-Admin, Admin"))]
         [HttpPost]
         public async Task<IActionResult> CreateQuestion(CreateQuestionRequest questionRequest)
         {

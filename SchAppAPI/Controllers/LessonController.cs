@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SchAppAPI.DOA.Requests;
 using SchAppAPI.DOA.Responses;
@@ -12,7 +13,7 @@ using SchAppAPI.Repository;
 
 namespace SchAppAPI.Controllers
 {
-
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class LessonController : ControllerBase
@@ -62,6 +63,7 @@ namespace SchAppAPI.Controllers
             return Ok(lessonToReturn);
         }
 
+        [Authorize(Roles= ("Editor, Super-Admin, Admin"))]
         [HttpPut]
         public async Task<IActionResult> UpdateLesson(UpdateLessonRequest lessonRequest)
         {
@@ -91,7 +93,7 @@ namespace SchAppAPI.Controllers
             return Ok(new { status = "success", message = "lesson successfully updated" });
         }
 
-
+        [Authorize(Roles = ("Super-Admin, Admin"))]
         [HttpDelete]
         public async Task<IActionResult> DeleteLesson(Guid id)
         {
@@ -102,6 +104,7 @@ namespace SchAppAPI.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = ("Super-Admin, Admin"))]
         [HttpPost]
         public async Task<IActionResult> Createlesson(CreateLessonRequest lessonRequest)
         {
@@ -133,6 +136,7 @@ namespace SchAppAPI.Controllers
             return Ok(new { status = "success", message = "Lesson successfully created" });
         }
 
+        [Authorize(Roles = ("Teacher"))]
         [HttpPost]
         [Route("Report")]
         public async Task<IActionResult> CreatelessonReport(CreateLessonReportRequest lessonReportRequest)
@@ -162,6 +166,7 @@ namespace SchAppAPI.Controllers
             return Ok();
         }
 
+        [Authorize(Roles = ("Teacher"))]
         [HttpPut]
         [Route("Report")]
         public async Task<IActionResult> UpdatelessonReport(UpdateLessonReportRequest lessonReportRequest)
@@ -187,6 +192,31 @@ namespace SchAppAPI.Controllers
             await this.lessonRepository.SaveChangesAsync();
 
             return Ok();
+        }
+        [Authorize(Roles="Admin. Super-Admin" )]
+        [HttpGet]
+        [Route("Report")]
+        public async Task<IActionResult> GetAllLessonReport()
+        {
+            var lessonReport = await this.lessonReportRepository.GetAll();
+            return Ok(lessonReport );
+        }
+
+        [Authorize(Roles = ("Teacher, Super-Admin, Admin"))]
+        [HttpGet]
+        [Route("Report/TeacherReports")]
+        public async Task<IActionResult> GetAllLessonReportForaTeacher()
+        {
+
+            if (!Guid.TryParse(User.Claims.Where(c => c.Type == "Id")
+                   .Select(c => c.Value).SingleOrDefault(), out var userId))
+            {
+                BadRequest("Invalid User Id");
+            }
+
+            var lessons = await this.lessonReportRepository.Get( lr => lr.TeacherId == userId);
+            var lessonToReturn = this.mapper.Map<List<GetAllLessonReponse>>(lessons);
+            return Ok(lessonToReturn);
         }
     }
 }

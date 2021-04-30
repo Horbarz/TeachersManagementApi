@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SchAppAPI.DOA;
@@ -9,6 +10,7 @@ using SchAppAPI.Services;
 
 namespace SchAppAPI.Controllers
 {
+    [Authorize(Roles = ("Super-Admin, Admin"))]
     [Route("api/[controller]")]
     [ApiController]
     public class NotificationController : ControllerBase
