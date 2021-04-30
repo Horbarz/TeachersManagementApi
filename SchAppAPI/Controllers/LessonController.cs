@@ -13,7 +13,6 @@ using SchAppAPI.Repository;
 
 namespace SchAppAPI.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class LessonController : ControllerBase
@@ -142,7 +141,7 @@ namespace SchAppAPI.Controllers
         [Authorize(Roles = ("Teacher"))]
         [HttpPost]
         [Route("Report")]
-        public async Task<IActionResult> CreatelessonReport(CreateLessonReportRequest lessonReportRequest)
+        public async Task<IActionResult> CreateOrUpdatelessonReport(CreateLessonReportRequest lessonReportRequest)
         {
 
             if (!ModelState.IsValid) BadRequest();
@@ -153,6 +152,24 @@ namespace SchAppAPI.Controllers
             {
                 BadRequest("Invalid User Id");
             }
+
+            var lessonReports = await this.lessonReportRepository.Get(lr => lr.LessonId == lessonReportRequest.LessonId &&
+                                                lr.TeacherId == userId);
+            if (lessonReports.Any())
+            {
+                var lessonReport = lessonReports.FirstOrDefault();            
+            
+                lessonReport.IsCompleted = lessonReportRequest.IsCompleted;
+                lessonReport.TimeSpentOnModule = Convert.ToString(lessonReportRequest.TimeSpentOnModule);
+                lessonReport.CompletionRate = Convert.ToString(lessonReportRequest.CompletionRate);
+            
+                this.lessonReportRepository.Update(lessonReport);
+                await this.lessonRepository.SaveChangesAsync();
+
+                return Ok(new { status = true, message = "Report updated Successfully" });
+            }
+
+
 
             var lessonReportToCreate = new LessonReport
             {
@@ -169,33 +186,7 @@ namespace SchAppAPI.Controllers
             return Ok(new { status = true, message = "Report added Successfully" });
         }
 
-        [Authorize(Roles = ("Teacher"))]
-        [HttpPut]
-        [Route("Report")]
-        public async Task<IActionResult> UpdatelessonReport(UpdateLessonReportRequest lessonReportRequest)
-        {
 
-            if (!ModelState.IsValid) BadRequest();
-
-            if (!Guid.TryParse(User.Identity.Name, out var userId))
-            {
-                BadRequest("Invalid User Id");
-            }
-
-            var lessonReportToCreate = new LessonReport
-            {
-                LessonId = lessonReportRequest.LessonId,
-                TeacherId = userId,
-                IsCompleted = lessonReportRequest.IsCompleted,
-                TimeSpentOnModule = Convert.ToString(lessonReportRequest.TimeSpentOnModule),
-                CompletionRate = Convert.ToString(lessonReportRequest.TimeSpentOnModule)
-            };
-
-            this.lessonReportRepository.Update(lessonReportToCreate);
-            await this.lessonRepository.SaveChangesAsync();
-
-            return Ok();
-        }
         [Authorize(Roles = "Admin, Super-Admin")]
         [HttpGet]
         [Route("Report")]
