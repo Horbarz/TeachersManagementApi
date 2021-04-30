@@ -45,6 +45,16 @@ namespace SchAppAPI.Controllers
             var lessonToReturn = this.mapper.Map<List<GetAllLessonReponse>>(lessons);
             return Ok(lessonToReturn);
         }
+
+        [HttpGet]
+        [Route("getTopLessons")]
+        public async Task<IActionResult> GetAllTopLessons()
+        {
+            var lessons = await this.lessonRepository.Get(Toplesson => Toplesson.isTopLesson == true, includeProperties: $"{nameof(Lesson.Subject)},{nameof(Lesson.Class)}");
+            var lessonToReturn = this.mapper.Map<List<GetAllLessonReponse>>(lessons);
+            return Ok(lessonToReturn);
+        }
+
         [HttpGet("{id}")]
         public async Task<IActionResult> GetLesson(Guid id)
         {
@@ -63,7 +73,7 @@ namespace SchAppAPI.Controllers
             return Ok(lessonToReturn);
         }
 
-        [Authorize(Roles= ("Editor, Super-Admin, Admin"))]
+        [Authorize(Roles = ("Editor, Super-Admin, Admin"))]
         [HttpPut]
         public async Task<IActionResult> UpdateLesson(UpdateLessonRequest lessonRequest)
         {
@@ -76,22 +86,14 @@ namespace SchAppAPI.Controllers
                 LessonNumber = lessonRequest.LessonNumber,
                 SubjectId = lessonRequest.SubjectId,
                 ClassId = lessonRequest.ClassId,
-                Thumbnail = lessonRequest.Thumbnail
+                Thumbnail = lessonRequest.Thumbnail,
+                isTopLesson = lessonRequest.isTopLesson
             };
             this.lessonRepository.Update(lessonToUpdate);
-
-            // var content = new Content
-            // {
-            //     LessonId = lessonToUpdate.Id,
-            //     contentType = ContentType.Text,
-            //     Body = lessonRequest.Content,
-            //     Title = lessonRequest.Name
-            // };
-
-            // this.contentRepository.Update(content);
             await this.lessonRepository.SaveChangesAsync();
             return Ok(new { status = "success", message = "lesson successfully updated" });
         }
+
 
         [Authorize(Roles = ("Super-Admin, Admin"))]
         [HttpDelete]
@@ -117,7 +119,8 @@ namespace SchAppAPI.Controllers
                 LessonNumber = lessonRequest.LessonNumber,
                 SubjectId = lessonRequest.SubjectId,
                 ClassId = lessonRequest.ClassId,
-                Thumbnail = lessonRequest.Thumbnail
+                Thumbnail = lessonRequest.Thumbnail,
+                isTopLesson = lessonRequest.isTopLesson
             };
             await this.lessonRepository.Add(lessonToCreate);
 
@@ -163,7 +166,7 @@ namespace SchAppAPI.Controllers
             await this.lessonReportRepository.Add(lessonReportToCreate);
             await this.lessonRepository.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { status = true, message = "Report added Successfully" });
         }
 
         [Authorize(Roles = ("Teacher"))]
@@ -193,13 +196,13 @@ namespace SchAppAPI.Controllers
 
             return Ok();
         }
-        [Authorize(Roles="Admin. Super-Admin" )]
+        [Authorize(Roles = "Admin, Super-Admin")]
         [HttpGet]
         [Route("Report")]
         public async Task<IActionResult> GetAllLessonReport()
         {
             var lessonReport = await this.lessonReportRepository.GetAll();
-            return Ok(lessonReport );
+            return Ok(lessonReport);
         }
 
         [Authorize(Roles = ("Teacher, Super-Admin, Admin"))]
@@ -214,9 +217,9 @@ namespace SchAppAPI.Controllers
                 BadRequest("Invalid User Id");
             }
 
-            var lessons = await this.lessonReportRepository.Get( lr => lr.TeacherId == userId);
-            var lessonToReturn = this.mapper.Map<List<GetAllLessonReponse>>(lessons);
-            return Ok(lessonToReturn);
+            var lessonReport = await this.lessonReportRepository.Get(lr => lr.TeacherId == userId);
+            // var lessonToReturn = this.mapper.Map<List<GetAllLessonReponse>>(lessons);
+            return Ok(lessonReport);
         }
     }
 }

@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using SchAppAPI.Contexts;
 using SchAppAPI.Models;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace SchAppAPI.Controllers
 {
@@ -36,11 +38,12 @@ namespace SchAppAPI.Controllers
             return Ok(new { status = "success", role = rolesModel.UserRoles });
         }
 
-        // public async Task<IActionResult> GetRoles(){
-        //     var roleStore = new RoleStore<IdentityRole>(context);
-        //     // var roleMngr = new RoleManager<IdentityRole>(roleStore); 
+        // public Task<IActionResult> GetRoles(){
+        //     var result = context.Roles.OrderBy(x=> x.Name);
+        //     var allRoles = new List<string>();
 
-        //     // var roles = roleMngr.Roles.ToList();
+
+        //     return Ok(new{ role = allRoles});
 
         // }
     }

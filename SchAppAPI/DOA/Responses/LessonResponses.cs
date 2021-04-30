@@ -14,6 +14,7 @@ namespace SchAppAPI.DOA.Responses
         public string Subject { get; set; }
         public string Class { get; set; }
         public string Thumbnail { get; set; }
+        public bool isTopLesson { get; set; }
         public DateTime CreatedOn { get; set; }
         public DateTime UpdatedOn { get; set; }
     }
@@ -25,6 +26,7 @@ namespace SchAppAPI.DOA.Responses
         public string Subject { get; set; }
         public string Class { get; set; }
         public string Thumbnail { get; set; }
+        public bool isTopLesson { get; set; }
         public virtual ICollection<GetLessonQuizResponse> Quiz { get; set; }
         public virtual ICollection<GetLessonContentesponse> Contents { get; set; }
         public DateTime CreatedOn { get; set; }

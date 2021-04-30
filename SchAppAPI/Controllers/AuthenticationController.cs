@@ -74,6 +74,10 @@ namespace SchAppAPI.Controllers
                     //update deviceToken
                     user.DeviceId = model.DeviceToken;
                 }
+                else
+                {
+                    model.DeviceToken = "";
+                }
                 await userManager.UpdateAsync(user);
                 //check the user role
                 //pass data into claims

@@ -43,7 +43,9 @@ namespace SchAppAPI.Controllers
             var subjectToUpdate = new Subject
             {
                 Id = subjectRequest.Id,
-                Name = subjectRequest.Name
+                Name = subjectRequest.Name,
+                Details = subjectRequest.Details,
+                Thumbnail = subjectRequest.Thumbnail
             };
             this.subjectRepo.Update(subjectToUpdate);
             await this.subjectRepo.SaveChangesAsync();
@@ -68,7 +70,9 @@ namespace SchAppAPI.Controllers
 
             var subjectToCreate = new Subject
             {
-                Name = subjectRequest.Name
+                Name = subjectRequest.Name,
+                Details = subjectRequest.Details,
+                Thumbnail = subjectRequest.Thumbnail
             };
             await this.subjectRepo.Add(subjectToCreate);
             await this.subjectRepo.SaveChangesAsync();

@@ -16,6 +16,7 @@ namespace SchAppAPI.DOA.Requests
         public Guid SubjectId { get; set; }
         public Guid ClassId { get; set; }
         public string Thumbnail { get; set; }
+        public bool isTopLesson { get; set; }
         public string Content { get; set; }
 
     }
@@ -33,7 +34,11 @@ namespace SchAppAPI.DOA.Requests
 
         [Required(ErrorMessage = "Subject id is required")]
         public Guid SubjectId { get; set; }
+
+        [Required(ErrorMessage = "Class id is required")]
         public Guid ClassId { get; set; }
+
+        public bool isTopLesson { get; set; }
 
         public string Content { get; set; }
 
@@ -44,10 +49,8 @@ namespace SchAppAPI.DOA.Requests
     public class CreateLessonReportRequest
     {
         public Guid LessonId { get; set; }
-
         public string CompletionRate { get; set; }
         public string TimeSpentOnModule { get; set; }
-
         public bool IsCompleted { get; set; }
     }
 
