@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Newtonsoft.Json;
 using SchAppAPI.Models;
+using SchAppAPI.Models.Chat;
 using SchAppAPI.Models.Lesson;
 
 namespace SchAppAPI.Contexts
@@ -44,6 +45,7 @@ namespace SchAppAPI.Contexts
         public DbSet<Question> Questions { get; set; }
         public DbSet<QuizReport> QuizReports { get; set; }
         public DbSet<LessonReport> LessonReports { get; set; }
+        public DbSet<Message> Messages{ get; set; }
 
         public DbSet<Notification> Notifications { get; set; }
 

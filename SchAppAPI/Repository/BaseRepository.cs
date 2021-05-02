@@ -12,13 +12,13 @@ namespace SchAppAPI.Repository
 {
     public class BaseRepository<TEntity> : IBaseRepository<TEntity> where TEntity : BaseEntity
     {
-        private SchoolDbContext _paymentProcessorContext;
+        private SchoolDbContext _schoolDbContext;
         private DbSet<TEntity> _dbSet;
 
-        public BaseRepository(SchoolDbContext paymentProcessorContext)
+        public BaseRepository(SchoolDbContext schoolDbContext)
         {
-            _paymentProcessorContext = paymentProcessorContext;
-            _dbSet = _paymentProcessorContext.Set<TEntity>();
+            _schoolDbContext = schoolDbContext;
+            _dbSet = _schoolDbContext.Set<TEntity>();
         }
 
         public async Task Add(TEntity entity)
@@ -66,7 +66,7 @@ namespace SchAppAPI.Repository
 
         public async Task SaveChangesAsync()
         {
-            await _paymentProcessorContext.SaveChangesAsync();
+            await _schoolDbContext.SaveChangesAsync();
         }
 
         public void Update(TEntity entity) => _dbSet.Attach(entity).State = EntityState.Modified;

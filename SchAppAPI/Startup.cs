@@ -59,7 +59,9 @@ namespace SchAppAPI
             services.AddTransient<IQuizReportRepository, QuizReportRepository>();
             services.AddTransient<ILessonReportRepository, LessonReportRepository>();
             services.AddTransient<INotificationRepository, NotificationRepository>();
-            
+            services.AddTransient<IChatRepository, ChatRepository>();
+
+
             services.AddTransient<IMobileMessagingClient, MobileMessagingClient>();
             services.AddSingleton<IMediaService, MediaService>();
             services.AddTransient<IEmailService, EmailService>();
