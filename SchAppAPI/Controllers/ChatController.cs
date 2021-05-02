@@ -57,7 +57,7 @@ namespace SchAppAPI.Controllers
 
         [HttpPost]
         [Route("markAsRead/{id}")]
-        public async Task<IActionResult> SendMessage(Guid messageId)
+        public async Task<IActionResult> MarkMessageAsRead(Guid messageId)
         {
             if (!ModelState.IsValid) return BadRequest();
 
@@ -81,8 +81,8 @@ namespace SchAppAPI.Controllers
         }
 
         [HttpGet]
-        [Route("{email}")]
-        public async Task<IActionResult> GetConversation(string email)
+        [Route("conversationwith/{email}")]
+        public async Task<IActionResult> GetConversationWithUser(string email)
         {
             if (!ModelState.IsValid) return BadRequest();
 
@@ -116,7 +116,7 @@ namespace SchAppAPI.Controllers
         }
 
         [HttpGet]
-        [Route("Unread")]
+        [Route("GetUnreadMessage")]
         public async Task<IActionResult> GetUnread()
         {
             if (!ModelState.IsValid) return BadRequest();
@@ -144,7 +144,8 @@ namespace SchAppAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetActiveChats()
+        [Route("GetChats")]
+        public async Task<IActionResult> GetChats()
         {
             if (!ModelState.IsValid) return BadRequest();
 
