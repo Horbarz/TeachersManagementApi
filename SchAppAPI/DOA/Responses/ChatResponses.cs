@@ -21,4 +21,11 @@ namespace SchAppAPI.DOA.Responses
         public bool Read { get; set; }
         public DateTime CreatedOn { get; set; }
     }
+    public class ChatListResponse
+    {
+        public string User { get; set; }
+        public string Body { get; set; }
+        public bool Read { get; set; }
+        public DateTime CreatedOn { get; set; }
+    }
 }

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchAppAPI.Contexts;
 
 namespace SchAppAPI.Migrations
 {
     [DbContext(typeof(SchoolDbContext))]
-    partial class SchoolDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210503191302_MessageDb2")]
+    partial class MessageDb2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -687,13 +689,11 @@ namespace SchAppAPI.Migrations
                 {
                     b.HasOne("SchAppAPI.Models.User", "Receipient")
                         .WithMany()
-                        .HasForeignKey("ReceipientId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("ReceipientId");
 
                     b.HasOne("SchAppAPI.Models.User", "Sender")
                         .WithMany()
-                        .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("SenderId");
 
                     b.Navigation("Receipient");
 

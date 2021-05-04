@@ -42,8 +42,8 @@ namespace SchAppAPI.Controllers
             if (string.IsNullOrWhiteSpace(sendMessageRequest.Body)) return BadRequest("Empty message");
             var message = new Message
             {
-                SenderId = userId,
-                ReceipientId = Guid.Parse(receipient.Id),
+                SenderId = userId.ToString(),
+                ReceipientId = receipient.Id,
                 Body = Convert.ToString(sendMessageRequest.Body)
             };
 
@@ -61,12 +61,11 @@ namespace SchAppAPI.Controllers
         {
             if (!ModelState.IsValid) return BadRequest();
 
-            if (!Guid.TryParse(User.Claims.Where(c => c.Type == "Id")
-                   .Select(c => c.Value).SingleOrDefault(), out var userId)) return BadRequest("User not found");
+            var userId = User.Claims.Where(c => c.Type == "Id")
+                   .Select(c => c.Value).SingleOrDefault();
 
 
-
-            if (userId == Guid.Empty) return BadRequest("User not found");
+            if (string.IsNullOrWhiteSpace(userId)) return BadRequest("User not found");
 
             var messageFromRepo = (await this.chatRepo.Get(msg => msg.ReceipientId == userId && msg.Id == messageId)).FirstOrDefault();
             if (messageFromRepo == null) return BadRequest("Invalid message");
@@ -86,20 +85,20 @@ namespace SchAppAPI.Controllers
         {
             if (!ModelState.IsValid) return BadRequest();
 
-            if (!Guid.TryParse(User.Claims.Where(c => c.Type == "Id")
-                               .Select(c => c.Value).SingleOrDefault(), out var userId)) return BadRequest("User not found");
+            var userId = User.Claims.Where(c => c.Type == "Id")
+                   .Select(c => c.Value).SingleOrDefault();
 
 
-            if (userId == Guid.Empty) return BadRequest("User not found");
+            if (string.IsNullOrWhiteSpace(userId)) return BadRequest("User not found");
 
 
             var receipient = await userManager.FindByEmailAsync(email);
             if (receipient == null) return NotFound("Receipient not found");
-            var receipientId = Guid.Parse(receipient.Id);
+            
 
 
-            var messagesFromRepo = await this.chatRepo.Get(msg => (msg.ReceipientId == receipientId && msg.SenderId == userId) ||
-                                                                  (msg.ReceipientId == userId && msg.SenderId == receipientId), 
+            var messagesFromRepo = await this.chatRepo.Get(msg => (msg.ReceipientId == receipient.Id && msg.SenderId == userId) ||
+                                                                  (msg.ReceipientId == userId && msg.SenderId == receipient.Id), 
                                                           msg => msg.OrderBy(msg => msg.CreatedOn));
 
             if (!messagesFromRepo.Any()) return Ok(new List<ConversationResponse>());
@@ -121,11 +120,11 @@ namespace SchAppAPI.Controllers
         {
             if (!ModelState.IsValid) return BadRequest();
 
-            if (!Guid.TryParse(User.Claims.Where(c => c.Type == "Id")
-                               .Select(c => c.Value).SingleOrDefault(), out var userId)) return BadRequest("User not found");
+            var userId = User.Claims.Where(c => c.Type == "Id")
+                   .Select(c => c.Value).SingleOrDefault();
 
 
-            if (userId == Guid.Empty) return BadRequest("User not found");
+            if (string.IsNullOrWhiteSpace(userId)) return BadRequest("User not found");
 
             var messagesFromRepo = await this.chatRepo.Get(msg => msg.ReceipientId == userId && msg.Read == false, null, $"{nameof(Message.Sender)}");
 
@@ -149,15 +148,25 @@ namespace SchAppAPI.Controllers
         {
             if (!ModelState.IsValid) return BadRequest();
 
-            if (!Guid.TryParse(User.Claims.Where(c => c.Type == "Id")
-                   .Select(c => c.Value).SingleOrDefault(), out var userId)) ;
 
-            if (userId == Guid.Empty) return BadRequest("User not found");
+            var userId = User.Claims.Where(c => c.Type == "Id")
+                   .Select(c => c.Value).SingleOrDefault();
+
+
+            if (string.IsNullOrWhiteSpace(userId)) return BadRequest("User not found");
 
             var messagesFromRepo = await this.chatRepo.GetActiveChats(userId);
             if (!messagesFromRepo.Any()) return Ok(new List<string>());
 
-            return Ok(messagesFromRepo);
+            var messagesToReturn = messagesFromRepo.Select(msg => new ChatListResponse
+            {
+                User = msg.SenderId == userId ? msg.Receipient.Email : msg.Sender.Email,
+                Body = msg.Body,
+                Read = msg.Read,
+                CreatedOn = msg.CreatedOn
+            });
+
+            return Ok(messagesToReturn);
         }
 
     }

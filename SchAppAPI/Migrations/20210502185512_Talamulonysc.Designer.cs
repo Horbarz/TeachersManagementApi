@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchAppAPI.Contexts;
 
 namespace SchAppAPI.Migrations
 {
     [DbContext(typeof(SchoolDbContext))]
-    partial class SchoolDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210502185512_Talamulonysc")]
+    partial class Talamulonysc
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -171,10 +173,16 @@ namespace SchAppAPI.Migrations
                     b.Property<bool>("Read")
                         .HasColumnType("bit");
 
-                    b.Property<string>("ReceipientId")
+                    b.Property<Guid>("ReceipientId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ReceipientId1")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("SenderId")
+                    b.Property<Guid>("SenderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SenderId1")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("UpdatedOn")
@@ -182,9 +190,9 @@ namespace SchAppAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ReceipientId");
+                    b.HasIndex("ReceipientId1");
 
-                    b.HasIndex("SenderId");
+                    b.HasIndex("SenderId1");
 
                     b.ToTable("Messages");
                 });
@@ -687,13 +695,11 @@ namespace SchAppAPI.Migrations
                 {
                     b.HasOne("SchAppAPI.Models.User", "Receipient")
                         .WithMany()
-                        .HasForeignKey("ReceipientId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("ReceipientId1");
 
                     b.HasOne("SchAppAPI.Models.User", "Sender")
                         .WithMany()
-                        .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("SenderId1");
 
                     b.Navigation("Receipient");
 

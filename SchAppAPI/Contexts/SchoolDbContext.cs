@@ -35,6 +35,18 @@ namespace SchAppAPI.Contexts
                 v => JsonConvert.DeserializeObject<IList<QuizUserAnswer>>(JsonConvert.SerializeObject(v)))
 
              );
+
+            builder.Entity<Message>().HasOne(x => x.Sender)
+                .WithMany()
+                .HasForeignKey(x => x.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<Message>()
+                .HasOne(x => x.Receipient)
+                .WithMany()
+                .HasForeignKey(x => x.ReceipientId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
         }
 
         public DbSet<Subject> Subjects { get; set; }

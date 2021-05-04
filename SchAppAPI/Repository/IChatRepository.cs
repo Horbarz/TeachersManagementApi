@@ -8,6 +8,6 @@ namespace SchAppAPI.Repository
 {
     public interface IChatRepository:IBaseRepository<Message>
     {
-        Task<IEnumerable<Message>> GetActiveChats(Guid userId);
+        Task<IEnumerable<Message>> GetActiveChats(string userId);
     }
 }
