@@ -12,6 +12,12 @@ namespace SchAppAPI.Services
         {
             CreateMap<Models.User, DOA.Teacher>().ReverseMap();
             CreateMap<Models.User, DOA.EditTeacher>().ReverseMap();
+            CreateMap<LessonReport, GetDownloadedLessonResponse>()
+                .ForMember(dest => dest.Subject, opt => opt.MapFrom(src => src.Lesson.Subject.Name))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Lesson.Name));
+            CreateMap<LessonReport, GetRecentLessonResponse>()
+                .ForMember(dest => dest.Thumbnail, opt => opt.MapFrom(src => src.Lesson.Thumbnail))
+                .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Lesson.Name));
             CreateMap<Lesson, GetAllLessonReponse>()
                 .ForMember(dest => dest.Subject, opt => opt.MapFrom(src => src.Subject.Name))
                 .ForMember(dest => dest.Class, opt => opt.MapFrom(src => src.Class.Name));
