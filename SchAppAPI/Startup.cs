@@ -57,6 +57,7 @@ namespace SchAppAPI
             services.AddTransient<ILessonRepository, LessonRepository>();
             services.AddTransient<IQuizRepository, QuizRepository>();
             services.AddTransient<IQuizReportRepository, QuizReportRepository>();
+            services.AddTransient<IQuestionRepository, QuestionRepository>();
             services.AddTransient<ILessonReportRepository, LessonReportRepository>();
             services.AddTransient<INotificationRepository, NotificationRepository>();
             services.AddTransient<IChatRepository, ChatRepository>();
