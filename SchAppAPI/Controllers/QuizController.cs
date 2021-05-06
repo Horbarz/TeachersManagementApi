@@ -28,8 +28,8 @@ namespace SchAppAPI.Controllers
         [Route("getAll")]
         public async Task<IActionResult> GetAllQuiz()
         {
-            //var quizzes = await this.quizRepository.GetAll();
-            var quizzes = await this.quizRepository.Get(null, null, $"{nameof(Quiz.Questions)}");
+
+            var quizzes = await this.quizRepository.Get(null,null,$"{nameof(Quiz.Questions)}");
             return Ok(quizzes);
         }
 
@@ -39,7 +39,13 @@ namespace SchAppAPI.Controllers
         {
             if (!ModelState.IsValid) BadRequest();
 
-            var quiz = await this.quizRepository.GetById(id);
+            //var quiz = await this.quizRepository.GetById(id);
+            var quiz = await this.quizRepository.Get(
+                quizz => quizz.Id == id,
+                null,
+                $"{nameof(Quiz.Questions)}"
+            );
+        
             return Ok(quiz);
         }
         [Authorize(Roles = ("Editor, Super-Admin, Admin"))]

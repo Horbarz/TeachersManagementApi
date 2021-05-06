@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Newtonsoft.Json;
 using SchAppAPI.Models;
+using SchAppAPI.Models.Chat;
 using SchAppAPI.Models.Lesson;
 
 namespace SchAppAPI.Contexts
@@ -34,6 +35,18 @@ namespace SchAppAPI.Contexts
                 v => JsonConvert.DeserializeObject<IList<QuizUserAnswer>>(JsonConvert.SerializeObject(v)))
 
              );
+
+            builder.Entity<Message>().HasOne(x => x.Sender)
+                .WithMany()
+                .HasForeignKey(x => x.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
+            builder.Entity<Message>()
+                .HasOne(x => x.Receipient)
+                .WithMany()
+                .HasForeignKey(x => x.ReceipientId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
         }
 
         public DbSet<Subject> Subjects { get; set; }
@@ -44,6 +57,7 @@ namespace SchAppAPI.Contexts
         public DbSet<Question> Questions { get; set; }
         public DbSet<QuizReport> QuizReports { get; set; }
         public DbSet<LessonReport> LessonReports { get; set; }
+        public DbSet<Message> Messages{ get; set; }
 
         public DbSet<Notification> Notifications { get; set; }
 

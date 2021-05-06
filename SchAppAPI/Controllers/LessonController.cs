@@ -57,7 +57,7 @@ namespace SchAppAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetLesson(Guid id)
         {
-            if (!ModelState.IsValid) BadRequest();
+            if (!ModelState.IsValid) return BadRequest ();
 
             var lesson = await this.lessonRepository.Get(
                 lesson => lesson.Id == id,
@@ -76,7 +76,7 @@ namespace SchAppAPI.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateLesson(UpdateLessonRequest lessonRequest)
         {
-            if (!ModelState.IsValid) BadRequest();
+            if (!ModelState.IsValid) return BadRequest ();
 
             var lessonToUpdate = new Lesson
             {
@@ -98,7 +98,7 @@ namespace SchAppAPI.Controllers
         [HttpDelete]
         public async Task<IActionResult> DeleteLesson(Guid id)
         {
-            if (!ModelState.IsValid) BadRequest();
+            if (!ModelState.IsValid) return  BadRequest();
 
             await this.lessonRepository.Delete(id);
             await this.lessonRepository.SaveChangesAsync();
@@ -110,7 +110,7 @@ namespace SchAppAPI.Controllers
         public async Task<IActionResult> Createlesson(CreateLessonRequest lessonRequest)
         {
 
-            if (!ModelState.IsValid) BadRequest();
+            if (!ModelState.IsValid) return BadRequest();
 
             var lessonToCreate = new Lesson
             {
@@ -221,7 +221,7 @@ namespace SchAppAPI.Controllers
         public async Task<IActionResult> CreateOrUpdatelessonReport(CreateLessonReportRequest lessonReportRequest)
         {
 
-            if (!ModelState.IsValid) BadRequest();
+            if (!ModelState.IsValid) return BadRequest();
 
             if (!Guid.TryParse(User.Claims.Where(c => c.Type == "Id")
                    .Select(c => c.Value).SingleOrDefault(), out var userId))

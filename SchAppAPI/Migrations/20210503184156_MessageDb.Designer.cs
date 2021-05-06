@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SchAppAPI.Contexts;
 
 namespace SchAppAPI.Migrations
 {
     [DbContext(typeof(SchoolDbContext))]
-    partial class SchoolDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210503184156_MessageDb")]
+    partial class MessageDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -184,7 +186,9 @@ namespace SchAppAPI.Migrations
 
                     b.HasIndex("ReceipientId");
 
-                    b.HasIndex("SenderId");
+                    b.HasIndex("SenderId")
+                        .IsUnique()
+                        .HasFilter("[SenderId] IS NOT NULL");
 
                     b.ToTable("Messages");
                 });
@@ -324,9 +328,6 @@ namespace SchAppAPI.Migrations
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsDownloaded")
                         .HasColumnType("bit");
 
                     b.Property<string>("TimeSpentOnModule")
@@ -690,12 +691,11 @@ namespace SchAppAPI.Migrations
                 {
                     b.HasOne("SchAppAPI.Models.User", "Receipient")
                         .WithMany()
-                        .HasForeignKey("ReceipientId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("ReceipientId");
 
                     b.HasOne("SchAppAPI.Models.User", "Sender")
-                        .WithMany()
-                        .HasForeignKey("SenderId")
+                        .WithOne()
+                        .HasForeignKey("SchAppAPI.Models.Chat.Message", "SenderId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Receipient");
