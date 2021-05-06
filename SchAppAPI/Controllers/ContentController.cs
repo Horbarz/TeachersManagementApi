@@ -41,6 +41,7 @@ namespace SchAppAPI.Controllers
             return Ok(content);
         }
 
+
         [Authorize(Roles = ("Editor, Super-Admin, Admin"))]
         [HttpPut]
         public async Task<IActionResult> UpdateContent(UpdateContentRequest contentRequest)
@@ -74,24 +75,37 @@ namespace SchAppAPI.Controllers
         [HttpPost("Upload")]
         public async Task<IActionResult> UploadContent([FromForm] UploadContentRequest contentRequest)
         {
-            
+
             if (!ModelState.IsValid) BadRequest();
 
-            var isValidContentType =  Enum.TryParse(contentRequest.contentType, out ContentType uploadedContentType);
+            var isValidContentType = Enum.TryParse(contentRequest.contentType, out ContentType uploadedContentType);
             if (!isValidContentType) return BadRequest("Invalid content Type");
 
             var contentUrl = string.Empty;
-            switch(uploadedContentType)
+            switch (uploadedContentType)
             {
                 case ContentType.Text:
-                    return BadRequest("Text content type not allowed");
+                    contentUrl = contentRequest.ContentBody;
+                    if (contentUrl == null)
+                    {
+                        return BadRequest("Please input content");
+                    }
+
                     break;
 
                 case ContentType.Image:
+                    if (contentRequest.ContentFile == null)
+                    {
+                        return BadRequest("Upload an Image to proceed");
+                    }
                     contentUrl = await mediaService.UploadImageContent(contentRequest.ContentFile.FileName, contentRequest.ContentFile.OpenReadStream());
                     break;
 
                 case ContentType.Video:
+                    if (contentRequest.ContentFile == null)
+                    {
+                        return BadRequest("Upload an Image to proceed");
+                    }
                     contentUrl = await mediaService.UploadVideoContent(contentRequest.ContentFile.FileName, contentRequest.ContentFile.OpenReadStream());
                     break;
             }
@@ -107,5 +121,24 @@ namespace SchAppAPI.Controllers
             await this.contentRepository.SaveChangesAsync();
             return Ok(new { status = "success", message = "Content successfully created" });
         }
+
+        // [HttpPost]
+        // public async Task<IActionResult> CreateContent(CreateContentRequest contentRequest)
+        // {
+
+        //     if (!ModelState.IsValid) BadRequest();
+
+        //     var contentToCreate = new Content
+        //     {
+        //         Title = contentRequest.Title,
+        //         contentType = contentRequest.contentType,
+        //         Body = contentRequest.Body,
+
+        //     };
+        //     await this.contentRepository.Add(contentToCreate);
+        //     await this.contentRepository.SaveChangesAsync();
+        //     return Ok(new { status = "success", message = "Content successfully created" });
+        // }
+
     }
 }

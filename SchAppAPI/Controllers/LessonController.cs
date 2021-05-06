@@ -139,13 +139,89 @@ namespace SchAppAPI.Controllers
         }
 
         [Authorize(Roles = ("Teacher"))]
+        [HttpGet]
+        [Route("GetRecentLessons")]
+        public async Task<IActionResult> GetRecentlyStudiedLesson()
+        {
+            if (!Guid.TryParse(User.Claims.Where(c => c.Type == "Id")
+                   .Select(c => c.Value).SingleOrDefault(), out var userId))
+            {
+                BadRequest("Invalid User Id");
+            }
+
+            var lessonReports = await this.lessonReportRepository.Get(lr => lr.TeacherId == userId,
+                lr => lr.OrderBy(lr => lr.CreatedOn),
+                includeProperties: $"{nameof(LessonReport.Lesson)}");
+
+
+            var recentLessons = this.mapper.Map<List<GetRecentLessonResponse>>(lessonReports);
+            return Ok(recentLessons);
+        }
+
+        [Authorize(Roles = ("Teacher"))]
+        [HttpGet]
+        [Route("GetDownloadedLessons")]
+        public async Task<IActionResult> GetDownloadedLessons()
+        {
+
+            if (!Guid.TryParse(User.Claims.Where(c => c.Type == "Id")
+                   .Select(c => c.Value).SingleOrDefault(), out var userId))
+            {
+                BadRequest("Invalid User Id");
+            }
+
+            var lessonReports = await this.lessonReportRepository.Get(lr => lr.TeacherId == userId &&
+                    lr.IsDownloaded == true, includeProperties: $"{nameof(LessonReport.Lesson)}");
+
+            if (lessonReports == null)
+            {
+                return NotFound("No downloaded lesson");
+            }
+
+            var downloadedLessons = this.mapper.Map<List<GetDownloadedLessonResponse>>(lessonReports);
+            return Ok(downloadedLessons);
+
+        }
+
+        [Authorize(Roles = ("Teacher"))]
+        [HttpPost]
+        [Route("Downloaded")]
+        public async Task<IActionResult> Downloaded(DownloadLessonReportRequest isDownloaded)
+        {
+            if (!ModelState.IsValid) BadRequest();
+
+
+            if (!Guid.TryParse(User.Claims.Where(c => c.Type == "Id")
+                   .Select(c => c.Value).SingleOrDefault(), out var userId))
+            {
+                BadRequest("Invalid User Id");
+            }
+
+            var lessonReports = await this.lessonReportRepository.Get(lr => lr.LessonId == isDownloaded.LessonId &&
+                                                lr.TeacherId == userId);
+
+            var lessonReport = lessonReports.FirstOrDefault();
+
+            lessonReport.IsCompleted = lessonReport.IsCompleted;
+            lessonReport.TimeSpentOnModule = lessonReport.TimeSpentOnModule;
+            lessonReport.CompletionRate = lessonReport.CompletionRate;
+            lessonReport.IsDownloaded = isDownloaded.IsDownloaded;
+
+            this.lessonReportRepository.Update(lessonReport);
+            await this.lessonRepository.SaveChangesAsync();
+
+            return Ok(new { status = true, message = "Lesson Downloaded Successfully" });
+
+        }
+
+
+        [Authorize(Roles = ("Teacher"))]
         [HttpPost]
         [Route("Report")]
         public async Task<IActionResult> CreateOrUpdatelessonReport(CreateLessonReportRequest lessonReportRequest)
         {
 
             if (!ModelState.IsValid) return BadRequest();
-
 
             if (!Guid.TryParse(User.Claims.Where(c => c.Type == "Id")
                    .Select(c => c.Value).SingleOrDefault(), out var userId))
@@ -155,14 +231,15 @@ namespace SchAppAPI.Controllers
 
             var lessonReports = await this.lessonReportRepository.Get(lr => lr.LessonId == lessonReportRequest.LessonId &&
                                                 lr.TeacherId == userId);
+
             if (lessonReports.Any())
             {
-                var lessonReport = lessonReports.FirstOrDefault();            
-            
+                var lessonReport = lessonReports.FirstOrDefault();
+
                 lessonReport.IsCompleted = lessonReportRequest.IsCompleted;
                 lessonReport.TimeSpentOnModule = Convert.ToString(lessonReportRequest.TimeSpentOnModule);
                 lessonReport.CompletionRate = Convert.ToString(lessonReportRequest.CompletionRate);
-            
+
                 this.lessonReportRepository.Update(lessonReport);
                 await this.lessonRepository.SaveChangesAsync();
 

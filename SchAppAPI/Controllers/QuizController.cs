@@ -28,6 +28,7 @@ namespace SchAppAPI.Controllers
         [Route("getAll")]
         public async Task<IActionResult> GetAllQuiz()
         {
+
             var quizzes = await this.quizRepository.Get(null,null,$"{nameof(Quiz.Questions)}");
             return Ok(quizzes);
         }
