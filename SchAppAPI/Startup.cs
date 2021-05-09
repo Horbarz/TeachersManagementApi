@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +23,7 @@ using SchAppAPI.Contexts;
 using SchAppAPI.Models;
 using SchAppAPI.Repository;
 using SchAppAPI.Services;
+using SchAppAPI.Services.Hubs;
 using SchAppAPI.Settings;
 
 namespace SchAppAPI
@@ -78,7 +80,6 @@ namespace SchAppAPI
 
             services.AddAutoMapper(typeof(Startup));
 
-
             services.AddIdentity<User, IdentityRole>()
                .AddEntityFrameworkStores<SchoolDbContext>()
                .AddDefaultTokenProviders();
@@ -102,6 +103,24 @@ namespace SchAppAPI
                     ValidIssuer = Configuration["JWT:ValidIssuer"],
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
                 };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+
+                        // If the request is for our hub...
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) &&
+                            (path.StartsWithSegments("/chathub")))
+                        {
+                            // Read the token out of the query string
+                            context.Token = accessToken;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             });
 
 
@@ -109,6 +128,11 @@ namespace SchAppAPI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "SchAppAPI", Version = "v1" });
             });
+
+            services.AddSingleton<IUserIdProvider, ClaimNameBasedUserIdProvider>();
+
+            services.AddSignalR();
+
 
             services.AddCors();
         }
@@ -119,9 +143,11 @@ namespace SchAppAPI
 
             //CROSS ORIGIN REQUEST SHARING
             app.UseCors(options =>
-                options.AllowAnyOrigin()
+                options
                 .AllowAnyHeader()
                 .AllowAnyMethod()
+                .SetIsOriginAllowed(origin => true) // allow any origin
+                .AllowCredentials()
 
             );
             if (env.IsDevelopment())
@@ -137,6 +163,7 @@ namespace SchAppAPI
 
             app.UseRouting();
 
+
             app.UseAuthentication();
 
             app.UseAuthorization();
@@ -144,6 +171,8 @@ namespace SchAppAPI
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<ChatHub>("/chathub");
+
             });
         }
     }

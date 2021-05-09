@@ -1,14 +1,19 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using Newtonsoft.Json;
 using SchAppAPI.DOA.Requests;
 using SchAppAPI.DOA.Responses;
 using SchAppAPI.Models;
 using SchAppAPI.Models.Chat;
 using SchAppAPI.Repository;
+using SchAppAPI.Services;
+using SchAppAPI.Services.Hubs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace SchAppAPI.Controllers
@@ -20,23 +25,29 @@ namespace SchAppAPI.Controllers
     {
         public readonly IChatRepository chatRepo;
         private readonly UserManager<User> userManager;
-        public ChatController(IChatRepository chatRepo, UserManager<User> usermanager)
+        private readonly IHubContext<ChatHub> hubContext;
+        private readonly IMobileMessagingClient messagingClient;
+        public ChatController(IChatRepository chatRepo, UserManager<User> usermanager, IHubContext<ChatHub> hubContext, IMobileMessagingClient messagingClient)
         {
             this.chatRepo = chatRepo;
             this.userManager = usermanager;
+            this.hubContext = hubContext;
+            this.messagingClient = messagingClient;
         }
-        
+
         [HttpPost]
-        [Route("sendmessage")]   
+        [Route("sendmessage")]
         public async Task<IActionResult> SendMessage(SendMessageRequest sendMessageRequest)
         {
+            //await this.hubContext.Clients.All.SendAsync("ReceiveMessage", sendMessageRequest.Body);
+
             if (!ModelState.IsValid) return BadRequest();
-            var  receipient = await userManager.FindByEmailAsync(sendMessageRequest.ReceipientEmail);
+            var receipient = await userManager.FindByEmailAsync(sendMessageRequest.ReceipientEmail);
             if (receipient == null) return NotFound("Receipient not found");
 
             if (!Guid.TryParse(User.Claims.Where(c => c.Type == "Id")
-                   .Select(c => c.Value).SingleOrDefault(), out var userId))  return BadRequest("User not found");
-            
+                   .Select(c => c.Value).SingleOrDefault(), out var userId)) return BadRequest("User not found");
+
 
             if (userId == Guid.Empty) return BadRequest("User not found");
             if (string.IsNullOrWhiteSpace(sendMessageRequest.Body)) return BadRequest("Empty message");
@@ -51,6 +62,27 @@ namespace SchAppAPI.Controllers
             await this.chatRepo.SaveChangesAsync();
 
             //todo:: update receipient real time
+            //await this.hubContext.Clients.All.SendAsync("ReceiveMessage", sendMessageRequest.Body);
+
+            var username = User.Claims.Where(c => c.Type == ClaimTypes.Name)
+                   .Select(c => c.Value).SingleOrDefault();
+
+            if(ConnectedUsers.Users.Contains(receipient.UserName))
+            {
+                var hubMessage = new Dictionary<string, string>
+                    {
+                        { "Sender", username },
+                        { "Message", message.Body}
+                    };
+
+                await this.hubContext.Clients.User(receipient.UserName)
+                    .SendAsync("ReceiveMessage", JsonConvert.SerializeObject(hubMessage));
+            }
+            else
+            {
+                await messagingClient.SendNotification(receipient.DeviceId, $"New Message From {username}", message.Body);
+            }
+
             return Ok(new { status = true, message = "Message sent Successfully" });
 
         }
