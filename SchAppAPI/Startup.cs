@@ -56,12 +56,13 @@ namespace SchAppAPI
             services.AddTransient<IContentRepository, ContentRepository>();
             services.AddTransient<ILessonRepository, LessonRepository>();
             services.AddTransient<IQuizRepository, QuizRepository>();
+            services.AddTransient<IQuestionRepository, QuestionRepository>();
             services.AddTransient<IQuizReportRepository, QuizReportRepository>();
             services.AddTransient<IQuestionRepository, QuestionRepository>();
             services.AddTransient<ILessonReportRepository, LessonReportRepository>();
             services.AddTransient<INotificationRepository, NotificationRepository>();
-            services.AddTransient<IChatRepository, ChatRepository>();
 
+            services.AddTransient<IChatRepository, ChatRepository>();
 
             services.AddTransient<IMobileMessagingClient, MobileMessagingClient>();
             services.AddSingleton<IMediaService, MediaService>();
@@ -70,14 +71,14 @@ namespace SchAppAPI
             services.Configure<SMTPConfigModel>(Configuration.GetSection("SMTPConfig"));
             services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinaryConfig"));
             //newtonsoft json
-          
+
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
             );
-            
+
             services.AddAutoMapper(typeof(Startup));
 
-          
+
             services.AddIdentity<User, IdentityRole>()
                .AddEntityFrameworkStores<SchoolDbContext>()
                .AddDefaultTokenProviders();

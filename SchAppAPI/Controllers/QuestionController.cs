@@ -81,10 +81,12 @@ namespace SchAppAPI.Controllers
                 OptionB = questionRequest.OptionB,
                 OptionC = questionRequest.OptionC,
                 OptionD = questionRequest.OptionD,
+                QuizId = questionRequest.QuizId,
+                Answer = questionRequest.Answer
             };
             await this.questionRepository.Add(questionToCreate);
             await this.questionRepository.SaveChangesAsync();
-            return Ok(new { status = "success", message = "Class successfully created" });
+            return Ok(new { status = "success", message = "Question successfully created for quiz" });
         }
 
     }

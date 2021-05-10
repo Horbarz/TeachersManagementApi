@@ -21,6 +21,7 @@ namespace SchAppAPI.DOA.Requests
 
     }
 
+
     public class UpdateLessonRequest
     {
         [Required(ErrorMessage = "Id is required")]
@@ -62,5 +63,11 @@ namespace SchAppAPI.DOA.Requests
         public string TimeSpentOnModule { get; set; }
 
         public bool IsCompleted { get; set; }
+    }
+
+    public class DownloadLessonReportRequest
+    {
+        public Guid LessonId { get; set; }
+        public bool IsDownloaded { get; set; }
     }
 }

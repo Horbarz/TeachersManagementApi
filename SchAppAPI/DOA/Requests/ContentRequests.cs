@@ -33,6 +33,8 @@ namespace SchAppAPI.DOA.Requests
         //[Required(ErrorMessage = "Attach content file required")]
         public IFormFile ContentFile { get; set; }
 
+        public string ContentBody { get; set; }
+
         [Required(ErrorMessage = "Lesson Id is required")]
         public Guid LessonId { get; set; }
 

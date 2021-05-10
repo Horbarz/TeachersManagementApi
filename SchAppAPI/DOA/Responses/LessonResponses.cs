@@ -40,6 +40,21 @@ namespace SchAppAPI.DOA.Responses
         public string Name { get; set; }
         public string QuizType { get; set; }
     }
+
+    public class GetDownloadedLessonResponse
+    {
+        public Guid LessonId { get; set; }
+        public string Name { get; set; }
+        public string Subject { get; set; }
+    }
+
+    public class GetRecentLessonResponse
+    {
+        public Guid LessonId { get; set; }
+        public string Name { get; set; }
+        public string Thumbnail { get; set; }
+    }
+
     public class GetLessonContentesponse
     {
         public Guid Id { get; set; }
