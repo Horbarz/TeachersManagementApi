@@ -28,7 +28,7 @@ namespace SchAppAPI.DOA
         public string Gender { get; set; }
         public string SchoolName { get; set; }
         public string Category { get; set; }
-        public string location { get; set; }
+        public Location location { get; set; }
         public string Experience { get; set; }
         public string SchoolType { get; set; }
 
