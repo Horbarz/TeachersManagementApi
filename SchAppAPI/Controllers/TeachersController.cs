@@ -41,11 +41,12 @@ namespace SchAppAPI.Controllers
 
         [HttpGet]
         [Route("getAll")]
-        public Task<List<User>> GetAllTeachers()
+        public async Task<List<ResponseTeacher>> GetAllTeachers()
         {
 
-            var allTeachers = userRepository.GetAllTeachers();
-            return allTeachers;
+            var allTeachers = await userRepository.GetAllTeachers();
+            var teachersToReturn = _mapper.Map<List<ResponseTeacher>>(allTeachers);
+            return teachersToReturn;
         }
 
         [HttpGet]
@@ -67,7 +68,7 @@ namespace SchAppAPI.Controllers
                 return NotFound();
             }
 
-            var mappedTeachers = _mapper.Map(teacherEntity, Teacher);
+            var mappedTeachers = _mapper.Map<ResponseTeacher>(teacherEntity);
             return Ok(mappedTeachers);
 
         }
@@ -83,7 +84,7 @@ namespace SchAppAPI.Controllers
                 return NotFound();
             }
 
-            var mappedTeachers = _mapper.Map(teacherEntity, Teacher);
+            var mappedTeachers = _mapper.Map<ResponseTeacher>(teacherEntity);
             return Ok(mappedTeachers);
 
         }

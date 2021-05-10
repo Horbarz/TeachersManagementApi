@@ -11,6 +11,7 @@ namespace SchAppAPI.Services
         public SchoolProfile()
         {
             CreateMap<Models.User, DOA.Teacher>().ReverseMap();
+            CreateMap<Models.User, ResponseTeacher>();
             CreateMap<Models.User, DOA.EditTeacher>().ReverseMap();
             CreateMap<LessonReport, GetDownloadedLessonResponse>()
                 .ForMember(dest => dest.Subject, opt => opt.MapFrom(src => src.Lesson.Subject.Name))
