@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
@@ -47,10 +48,17 @@ namespace SchAppAPI.Controllers
             return allTeachers;
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetSingleTeacher(String uid)
+        [HttpGet]
+        public async Task<IActionResult> GetSingleTeacher()
         {
-            var teacherEntity = userRepository.GetSingleTeacher(uid);
+
+            var userId = User.Claims.Where(c => c.Type == "Id")
+                   .Select(c => c.Value).SingleOrDefault();
+
+
+            if (string.IsNullOrWhiteSpace(userId)) return BadRequest("User not found");
+
+            var teacherEntity = await userRepository.GetSingleTeacher(userId);
 
 
             if (teacherEntity == null)
@@ -58,10 +66,28 @@ namespace SchAppAPI.Controllers
                 return NotFound();
             }
 
-            var mappedTeachers = _mapper.Map(teacherEntity.Result, Teacher);
+            var mappedTeachers = _mapper.Map(teacherEntity, Teacher);
             return Ok(mappedTeachers);
 
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetSingleTeacher(String uid)
+        {
+            var teacherEntity = await userRepository.GetSingleTeacher(uid);
+
+
+            if (teacherEntity == null)
+            {
+                return NotFound();
+            }
+
+            var mappedTeachers = _mapper.Map(teacherEntity, Teacher);
+            return Ok(mappedTeachers);
+
+        }
+
+
 
         [HttpPut("{uid}")]
         public async Task<IActionResult> PutSingleTeacher(String uid, EditTeacher teach)
