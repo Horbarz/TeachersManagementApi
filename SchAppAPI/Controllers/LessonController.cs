@@ -109,7 +109,7 @@ namespace SchAppAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> Createlesson(CreateLessonRequest lessonRequest)
         {
-
+            
             if (!ModelState.IsValid) return BadRequest();
 
             var lessonToCreate = new Lesson

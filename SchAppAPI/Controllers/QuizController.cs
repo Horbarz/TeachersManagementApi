@@ -126,8 +126,7 @@ namespace SchAppAPI.Controllers
             };
             await this.quizReportRepository.Add(quizReport);
             await this.quizReportRepository.SaveChangesAsync();
-            return Ok();
+            return Ok(new {status = "Quiz graded for"+userId});
         }
-
     }
 }
