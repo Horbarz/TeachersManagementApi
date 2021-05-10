@@ -49,6 +49,7 @@ namespace SchAppAPI.Controllers
         }
 
         [HttpGet]
+        [Route("getdetail")]
         public async Task<IActionResult> GetSingleTeacher()
         {
 
