@@ -35,7 +35,7 @@ namespace SchAppAPI.Controllers
         public async Task<IActionResult> SendPushNotification(CreateSingleNotificationRequest notification)
         {
             var notificationToCreate = new Notification
-            {
+            { 
                 Title = notification.Title,
                 Subject = notification.Subject,
                 Content = notification.Content

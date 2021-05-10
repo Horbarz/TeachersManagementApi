@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
@@ -40,17 +41,26 @@ namespace SchAppAPI.Controllers
 
         [HttpGet]
         [Route("getAll")]
-        public Task<List<User>> GetAllTeachers()
+        public async Task<List<ResponseTeacher>> GetAllTeachers()
         {
 
-            var allTeachers = userRepository.GetAllTeachers();
-            return allTeachers;
+            var allTeachers = await userRepository.GetAllTeachers();
+            var teachersToReturn = _mapper.Map<List<ResponseTeacher>>(allTeachers);
+            return teachersToReturn;
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetSingleTeacher(String uid)
+        [HttpGet]
+        [Route("getdetail")]
+        public async Task<IActionResult> GetSingleTeacher()
         {
-            var teacherEntity = userRepository.GetSingleTeacher(uid);
+
+            var userId = User.Claims.Where(c => c.Type == "Id")
+                   .Select(c => c.Value).SingleOrDefault();
+
+
+            if (string.IsNullOrWhiteSpace(userId)) return BadRequest("User not found");
+
+            var teacherEntity = await userRepository.GetSingleTeacher(userId);
 
 
             if (teacherEntity == null)
@@ -58,10 +68,28 @@ namespace SchAppAPI.Controllers
                 return NotFound();
             }
 
-            var mappedTeachers = _mapper.Map(teacherEntity.Result, Teacher);
+            var mappedTeachers = _mapper.Map<ResponseTeacher>(teacherEntity);
             return Ok(mappedTeachers);
 
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetSingleTeacher(String uid)
+        {
+            var teacherEntity = await userRepository.GetSingleTeacher(uid);
+
+
+            if (teacherEntity == null)
+            {
+                return NotFound();
+            }
+
+            var mappedTeachers = _mapper.Map<ResponseTeacher>(teacherEntity);
+            return Ok(mappedTeachers);
+
+        }
+
+
 
         [HttpPut("{uid}")]
         public async Task<IActionResult> PutSingleTeacher(String uid, EditTeacher teach)
