@@ -159,10 +159,10 @@ function Navigation() {
                             </li>
 
                             <li>
-                                <a href="javascript: void(0);" className="waves-effect">
-                                    <i className="mdi mdi-calendar-check"></i>
+                                <Link to="/lesson" className="waves-effect">
+                                    <i className="mdi mdi-flip-horizontal"></i>
                                     <span>Lessons</span>
-                                </a>
+                                </Link>
                             </li>
                             <li>
                                 <a href="javascript: void(0);" className="waves-effect">
