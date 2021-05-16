@@ -9,7 +9,7 @@ var saveButton = function (context) {
 
     // create button
     var button = ui.button({
-        contents: '<i class="fa fa-save"/> Save',
+        contents: '<i class="fa fa-save"/> Save Lesson',
         //tooltip: 'hello',
         click: function () {
             // invoke insertText method with 'hello' on editor module.
@@ -48,7 +48,7 @@ function SummerCodeEditor() {
                 ['font', ['bold', 'clear']],
                 //['insert', ['picture', 'video']],
                 ['view', ['fullscreen']],
-                ['mybutton', ['save', 'insert']]
+                ['mybutton', ['insert','save']]
             ],
 
             buttons: {
