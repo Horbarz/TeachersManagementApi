@@ -64,7 +64,7 @@ namespace SchAppAPI
             services.AddTransient<IQuestionRepository, QuestionRepository>();
             services.AddTransient<ILessonReportRepository, LessonReportRepository>();
             services.AddTransient<INotificationRepository, NotificationRepository>();
-
+            services.AddTransient<IGalleryRepository, GalleryRepository>();
             services.AddTransient<IChatRepository, ChatRepository>();
 
             services.AddTransient<IMobileMessagingClient, MobileMessagingClient>();
@@ -180,7 +180,6 @@ namespace SchAppAPI
                 endpoints.MapHub<ChatHub>("/chathub");
 
             });
-
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
             app.UseSpa(spa =>
