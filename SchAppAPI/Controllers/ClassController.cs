@@ -70,6 +70,20 @@ namespace SchAppAPI.Controllers
         public async Task<IActionResult> CreateClass(CreateClassRequest classRequest)
         {
             if (!ModelState.IsValid) BadRequest();
+            try
+            {
+                var query = this.classRepo.GetAll().Result.ToList();
+                var nme = query.Where(clas => clas.Name.Contains(classRequest.Name)
+                    && clas.Terms.Equals(classRequest.Terms));
+                if (nme != null)
+                {
+                    return Ok(new { status = "failed", message = "Class already exists" });
+                }
+            }
+            catch (Exception)
+            {
+                return BadRequest();
+            }
 
             var classToCreate = new Class
             {
@@ -78,7 +92,7 @@ namespace SchAppAPI.Controllers
             };
             await this.classRepo.Add(classToCreate);
             await this.classRepo.SaveChangesAsync();
-            return Ok();
-        } 
+            return Ok(new { status = "success", message = "Class created successfully" });
+        }
     }
 }

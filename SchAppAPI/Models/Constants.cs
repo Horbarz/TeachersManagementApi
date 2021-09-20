@@ -22,4 +22,9 @@ namespace SchAppAPI.Models
     {
         Text, Video, Image
     }
+
+    public enum NotificationType
+    {
+        InApp, Banner
+    }
 }

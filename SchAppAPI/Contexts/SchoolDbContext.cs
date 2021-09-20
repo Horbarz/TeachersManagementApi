@@ -62,6 +62,7 @@ namespace SchAppAPI.Contexts
         public DbSet<Notification> Notifications { get; set; }
 
         public DbSet<Gallery> Galleries { get; set; }
+        public DbSet<Logs> Logs { get; set; }
 
         public override int SaveChanges()
         {

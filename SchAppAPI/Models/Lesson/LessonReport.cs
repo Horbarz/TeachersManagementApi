@@ -15,6 +15,8 @@ namespace SchAppAPI.Models.Lesson
         public string TimeSpentOnModule { get; set; }
         public bool IsCompleted { get; set; }
         public bool IsDownloaded { get; set; } = false;
+        public string sub { get; set; }
+        public string LessonName { get; set; }
 
     }
 }

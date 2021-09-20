@@ -87,6 +87,7 @@ namespace SchAppAPI.Controllers
                 ClassId = lessonRequest.ClassId,
                 Thumbnail = lessonRequest.Thumbnail,
                 isTopLesson = lessonRequest.isTopLesson
+                
             };
             this.lessonRepository.Update(lessonToUpdate);
             await this.lessonRepository.SaveChangesAsync();
