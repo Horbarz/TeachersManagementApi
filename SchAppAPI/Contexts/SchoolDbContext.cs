@@ -57,9 +57,11 @@ namespace SchAppAPI.Contexts
         public DbSet<Question> Questions { get; set; }
         public DbSet<QuizReport> QuizReports { get; set; }
         public DbSet<LessonReport> LessonReports { get; set; }
-        public DbSet<Message> Messages{ get; set; }
+        public DbSet<Message> Messages { get; set; }
 
         public DbSet<Notification> Notifications { get; set; }
+
+        public DbSet<Gallery> Galleries { get; set; }
 
         public override int SaveChanges()
         {

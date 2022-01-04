@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -63,7 +64,7 @@ namespace SchAppAPI
             services.AddTransient<IQuestionRepository, QuestionRepository>();
             services.AddTransient<ILessonReportRepository, LessonReportRepository>();
             services.AddTransient<INotificationRepository, NotificationRepository>();
-
+            services.AddTransient<IGalleryRepository, GalleryRepository>();
             services.AddTransient<IChatRepository, ChatRepository>();
 
             services.AddTransient<IMobileMessagingClient, MobileMessagingClient>();
@@ -135,6 +136,11 @@ namespace SchAppAPI
 
 
             services.AddCors();
+
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "ClientApp/build";
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -173,6 +179,17 @@ namespace SchAppAPI
                 endpoints.MapControllers();
                 endpoints.MapHub<ChatHub>("/chathub");
 
+            });
+            app.UseStaticFiles();
+            app.UseSpaStaticFiles();
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "ClientApp";
+
+                if (env.IsDevelopment())
+                {
+                    spa.UseReactDevelopmentServer(npmScript: "start");
+                }
             });
         }
     }
